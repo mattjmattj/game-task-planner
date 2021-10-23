@@ -1,0 +1,4 @@
+services:
+    App\Service\Planner\PlannerInterface:
+        public: true
+        alias: 'App\Service\Planner\BasicPlanner'
