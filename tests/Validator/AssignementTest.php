@@ -82,7 +82,36 @@ final class AssignementTest extends ConstraintValidatorTestCase
      */
     public function shouldRaiseAnErrorWhenSomeTasksAreMissing(): void
     {
-        $this->markTestIncomplete();
+        $this->expectNoValidate();
+
+        $planning = $this->makePlanning();
+        $persons = $planning->getPersons();
+        $taskTypes = $planning->getTaskTypes();
+        $assignement = $this->makeAssignement($planning);
+
+        $assignement->addTask(
+            (new Task)->setAssignee($persons[0])->setType($taskTypes[0])->setGame(0)
+        );
+        $assignement->addTask(
+            (new Task)->setAssignee($persons[1])->setType($taskTypes[1])->setGame(0)
+        );
+        $assignement->addTask(
+            (new Task)->setAssignee($persons[1])->setType($taskTypes[0])->setGame(1)
+        );
+        $assignement->addTask(
+            (new Task)->setAssignee($persons[2])->setType($taskTypes[1])->setGame(1)
+        );
+        // removing one task from previous test
+        $assignement->addTask(
+            (new Task)->setAssignee($persons[0])->setType($taskTypes[1])->setGame(2)
+        );
+
+        $constraint = new AssignementConstraint;
+        $this->validator->validate($assignement, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setCode(AssignementConstraint::MISSING_TASKS_ERROR)
+            ->assertRaised();
     }
 
     /**

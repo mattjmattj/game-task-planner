@@ -7,6 +7,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class AssignementValidator extends ConstraintValidator
 {
+    
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof Assignement) {
