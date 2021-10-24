@@ -33,12 +33,6 @@ class Task
      */
     private $type;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Planning::class, inversedBy="tasks")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $planning;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -80,15 +74,4 @@ class Task
         return $this;
     }
 
-    public function getPlanning(): ?Planning
-    {
-        return $this->planning;
-    }
-
-    public function setPlanning(?Planning $planning): self
-    {
-        $this->planning = $planning;
-
-        return $this;
-    }
 }
