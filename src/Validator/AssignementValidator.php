@@ -30,32 +30,30 @@ class AssignementValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        $tasks = $assignement->getTasksGroupedByGame();
-
-        foreach ($tasks as $game => $tasksForGame) {
+        // we will keep track of the tasks we meet by person and by type, for each game
+        $types = $persons = [];
+        
+        foreach ($assignement->getTasks() as $task) {
             /** @var Task $task */
+
+            $type = $task->getType()->__toString();
+            $person = $task->getAssignee()->__toString();
+            $game = $task->getGame();
             
-            $types = $persons = [];
-
-            foreach ($tasksForGame as $task) {
-                $type = $task->getType()->__toString();
-                $person = $task->getAssignee()->__toString();
-                
-                if (isset($types[$type])) {
-                    $this->context->buildViolation($constraint->message)
-                        ->setCode(Assignement::DUPLICATED_TASKS_ERROR)
-                        ->addViolation();
-                }
-
-                if (isset($persons[$person])) {
-                    $this->context->buildViolation($constraint->message)
-                        ->setCode(Assignement::MULTIPLE_TASKS_ERROR)
-                        ->addViolation();
-                }
-
-                $types[$type] = true;
-                $persons[$person] = true;
+            if (isset($types[$game][$type])) {
+                $this->context->buildViolation($constraint->message)
+                    ->setCode(Assignement::DUPLICATED_TASKS_ERROR)
+                    ->addViolation();
             }
+
+            if (isset($persons[$game][$person])) {
+                $this->context->buildViolation($constraint->message)
+                    ->setCode(Assignement::MULTIPLE_TASKS_ERROR)
+                    ->addViolation();
+            }
+
+            $types[$game][$type] = true;
+            $persons[$game][$person] = true;
         }
     }
 }
