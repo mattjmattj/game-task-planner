@@ -80,7 +80,7 @@ final class AssignementTest extends ConstraintValidatorTestCase
     /**
      * @test
      */
-    public function shouldRaiseAnErrorWhenSomeTasksAreMissing(): void
+    public function shouldNotValidateWhenSomeTasksAreMissing(): void
     {
         $this->expectNoValidate();
 
@@ -117,7 +117,7 @@ final class AssignementTest extends ConstraintValidatorTestCase
     /**
      * @test
      */
-    public function shouldRaiseAnErrorWhenSomeTasksAreDuplicated(): void
+    public function shouldNotValidateWhenSomeTasksAreDuplicated(): void
     {
         $this->markTestIncomplete();
     }
@@ -125,7 +125,7 @@ final class AssignementTest extends ConstraintValidatorTestCase
     /**
      * @test
      */
-    public function shouldRaiseAnErrorWhenSomePeopleAreGivenMultipleTasksForTheSameGame(): void
+    public function shouldNotValidateWhenSomePeopleAreGivenMultipleTasksForTheSameGame(): void
     {
         $this->markTestIncomplete();
     }
