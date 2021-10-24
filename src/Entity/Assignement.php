@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=AssignementRepository::class)
  */
+#[\App\Validator\Assignement]
 class Assignement
 {
     /**
