@@ -30,58 +30,32 @@ class AssignementValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        foreach ($assignement->getTasks() as $task) {
+        $tasks = $assignement->getTasksGroupedByGame();
+
+        foreach ($tasks as $game => $tasksForGame) {
             /** @var Task $task */
-            if ($this->isTaskDuplicated($task, $assignement->getTasks())) {
-                $this->context->buildViolation($constraint->message)
-                    ->setCode(Assignement::DUPLICATED_TASKS_ERROR)
-                    ->addViolation();
+            
+            $types = $persons = [];
+
+            foreach ($tasksForGame as $task) {
+                $type = $task->getType()->__toString();
+                $person = $task->getAssignee()->__toString();
                 
-                // duplication errors can get messy, so we break at the first one
-                // in order to keep errors under control
-                break;
-            }
+                if (isset($types[$type])) {
+                    $this->context->buildViolation($constraint->message)
+                        ->setCode(Assignement::DUPLICATED_TASKS_ERROR)
+                        ->addViolation();
+                }
 
-            if ($this->isAssigneeDuplicated($task, $assignement->getTasks())) {
-                $this->context->buildViolation($constraint->message)
-                    ->setCode(Assignement::MULTIPLE_TASKS_ERROR)
-                    ->addViolation();
-                
-                // duplication errors can get messy, so we break at the first one
-                // in order to keep errors under control
-                break;
-            }
+                if (isset($persons[$person])) {
+                    $this->context->buildViolation($constraint->message)
+                        ->setCode(Assignement::MULTIPLE_TASKS_ERROR)
+                        ->addViolation();
+                }
 
-        }
-    }
-
-    private function isTaskDuplicated(Task $task, iterable $tasks): bool
-    {
-        foreach ($tasks as $comparedTask) {
-            /** @var Task $comparedTask */
-            if ($task === $comparedTask) {
-                continue;
-            }
-            if ($task->getGame() === $comparedTask->getGame()
-                && $task->getType() === $comparedTask->getType()) {
-                return true;
+                $types[$type] = true;
+                $persons[$person] = true;
             }
         }
-        return false;
-    }
-
-    private function isAssigneeDuplicated(Task $task, iterable $tasks): bool
-    {
-        foreach ($tasks as $comparedTask) {
-            /** @var Task $comparedTask */
-            if ($task === $comparedTask) {
-                continue;
-            }
-            if ($task->getGame() === $comparedTask->getGame()
-                && $task->getAssignee() === $comparedTask->getAssignee()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

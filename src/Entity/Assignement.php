@@ -88,6 +88,17 @@ class Assignement
         return $this;
     }
 
+    public function getTasksGroupedByGame(): iterable
+    {
+        $tasks = [];
+        foreach($this->getTasks() as $task) {
+            /** @var Task $task */
+
+            $tasks[$task->getGame()][] = $task;
+        }
+        return $tasks;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;
