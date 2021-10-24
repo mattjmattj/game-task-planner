@@ -2,25 +2,31 @@
 
 namespace App\Validator;
 
+use App\Entity\Assignement as AssignementEntity;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class AssignementValidator extends ConstraintValidator
 {
     
-    public function validate($value, Constraint $constraint)
+    public function validate($assignement, Constraint $constraint)
     {
         if (!$constraint instanceof Assignement) {
             return;
         }
 
-        if (null === $value || '' === $value) {
+        if (!$assignement instanceof AssignementEntity) {
             return;
         }
 
-        // TODO: implement the validation here
-        // $this->context->buildViolation($constraint->message)
-        //     ->setParameter('{{ value }}', $value)
-        //     ->addViolation();
+        $taskTypes = $assignement->getPlanning()->getTaskTypes();
+        $gameCount = $assignement->getPlanning()->getGameCount();
+        $totalExpectedTasks = count($taskTypes) * $gameCount;
+
+        if (count($assignement->getTasks()) !== $totalExpectedTasks) {
+            $this->context->buildViolation($constraint->message)
+                ->setCode(Assignement::MISSING_TASKS_ERROR)
+                ->addViolation();
+        }
     }
 }
