@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use App\Entity\Assignement as AssignementEntity;
+use App\Entity\Task;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -28,5 +29,33 @@ class AssignementValidator extends ConstraintValidator
                 ->setCode(Assignement::MISSING_TASKS_ERROR)
                 ->addViolation();
         }
+
+        foreach ($assignement->getTasks() as $task) {
+            /** @var Task $task */
+            if ($this->isTaskDuplicated($task, $assignement->getTasks())) {
+                $this->context->buildViolation($constraint->message)
+                    ->setCode(Assignement::DUPLICATED_TASKS_ERROR)
+                    ->addViolation();
+                
+                // duplication errors can get messy, so we break at the first one
+                // in order to keep errors under control
+                break;
+            }
+        }
+    }
+
+    private function isTaskDuplicated(Task $task, iterable $tasks): bool
+    {
+        foreach ($tasks as $comparedTask) {
+            /** @var Task $comparedTask */
+            if ($task === $comparedTask) {
+                continue;
+            }
+            if ($task->getGame() === $comparedTask->getGame()
+                && $task->getType() === $comparedTask->getType()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -139,7 +139,7 @@ final class AssignementTest extends ConstraintValidatorTestCase
         $assignement->addTask(
             (new Task)->setAssignee($persons[2])->setType($taskTypes[0])->setGame(2)
         );
-        // second type[0] task
+        // second type[0] task for game 2
         $assignement->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[0])->setGame(2)
         );
