@@ -22,12 +22,6 @@ class TaskType
      */
     private $name;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Planning::class, inversedBy="taskTypes")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $planning;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -55,5 +49,10 @@ class TaskType
         $this->planning = $planning;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 }

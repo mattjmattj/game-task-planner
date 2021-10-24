@@ -25,31 +25,24 @@ class Planning
     private string $title;
 
     /**
-     * @ORM\OneToMany(targetEntity=Game::class, mappedBy="planning", orphanRemoval=true)
-     */
-    private $games;
-
-    /**
-     * @ORM\OneToMany(targetEntity=TaskType::class, mappedBy="planning", orphanRemoval=true)
-     */
-    private $taskTypes;
-
-    /**
      * @ORM\ManyToMany(targetEntity=Person::class, inversedBy="plannings")
      */
     private $persons;
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="planning", orphanRemoval=true)
+     * @ORM\ManyToMany(targetEntity=TaskType::class)
      */
-    private $tasks;
+    private $taskTypes;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $gameNumber;
 
     public function __construct()
     {
-        $this->games = new ArrayCollection();
         $this->taskTypes = new ArrayCollection();
         $this->persons = new ArrayCollection();
-        $this->tasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -65,36 +58,6 @@ class Planning
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Game[]
-     */
-    public function getGames(): Collection
-    {
-        return $this->games;
-    }
-
-    public function addGame(Game $game): self
-    {
-        if (!$this->games->contains($game)) {
-            $this->games[] = $game;
-            $game->setPlanning($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGame(Game $game): self
-    {
-        if ($this->games->removeElement($game)) {
-            // set the owning side to null (unless already changed)
-            if ($game->getPlanning() === $this) {
-                $game->setPlanning(null);
-            }
-        }
 
         return $this;
     }
@@ -153,32 +116,14 @@ class Planning
         return $this;
     }
 
-    /**
-     * @return Collection|Task[]
-     */
-    public function getTasks(): Collection
+    public function getGameNumber(): ?int
     {
-        return $this->tasks;
+        return $this->gameNumber;
     }
 
-    public function addTask(Task $task): self
+    public function setGameNumber(int $gameNumber): self
     {
-        if (!$this->tasks->contains($task)) {
-            $this->tasks[] = $task;
-            $task->setPlanning($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTask(Task $task): self
-    {
-        if ($this->tasks->removeElement($task)) {
-            // set the owning side to null (unless already changed)
-            if ($task->getPlanning() === $this) {
-                $task->setPlanning(null);
-            }
-        }
+        $this->gameNumber = $gameNumber;
 
         return $this;
     }
