@@ -37,7 +37,7 @@ class Planning
     /**
      * @ORM\Column(type="integer")
      */
-    private $gameNumber;
+    private $gameCount;
 
     /**
      * @ORM\OneToMany(targetEntity=Assignement::class, mappedBy="planning", orphanRemoval=true)
@@ -122,14 +122,14 @@ class Planning
         return $this;
     }
 
-    public function getGameNumber(): ?int
+    public function getGameCount(): ?int
     {
-        return $this->gameNumber;
+        return $this->gameCount;
     }
 
-    public function setGameNumber(int $gameNumber): self
+    public function setGameCount(int $gameCount): self
     {
-        $this->gameNumber = $gameNumber;
+        $this->gameCount = $gameCount;
 
         return $this;
     }

@@ -24,7 +24,7 @@ final class AssignementTest extends ConstraintValidatorTestCase
         $planning = new Planning;
 
         $planning->setTitle('Test planning');
-        $planning->setGameNumber(3);
+        $planning->setGameCount(3);
         $planning->addTaskType((new TaskType)->setName('type 1'));
         $planning->addTaskType((new TaskType)->setName('type 2'));
         $planning->addPerson((new Person)->setName('person 1'));

@@ -24,7 +24,7 @@ class PlanningCrudController extends AbstractCrudController
             TextField::new('title', 'Title'),
             AssociationField::new('taskTypes', 'Task types'),
             AssociationField::new('persons', 'Persons'),
-            IntegerField::new('gameNumber', 'Number of games'),
+            IntegerField::new('gameCount', 'Number of games'),
         ];
     }
     
