@@ -33,6 +33,17 @@ class Task
      */
     private $type;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Assignement::class, inversedBy="tasks")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $assignement;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $game;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,6 +81,30 @@ class Task
     public function setType(?TaskType $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getAssignement(): ?Assignement
+    {
+        return $this->assignement;
+    }
+
+    public function setAssignement(?Assignement $assignement): self
+    {
+        $this->assignement = $assignement;
+
+        return $this;
+    }
+
+    public function getGame(): ?int
+    {
+        return $this->game;
+    }
+
+    public function setGame(int $game): self
+    {
+        $this->game = $game;
 
         return $this;
     }

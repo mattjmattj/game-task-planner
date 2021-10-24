@@ -39,10 +39,16 @@ class Planning
      */
     private $gameNumber;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Assignement::class, mappedBy="planning", orphanRemoval=true)
+     */
+    private $assignements;
+
     public function __construct()
     {
         $this->taskTypes = new ArrayCollection();
         $this->persons = new ArrayCollection();
+        $this->assignements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +130,36 @@ class Planning
     public function setGameNumber(int $gameNumber): self
     {
         $this->gameNumber = $gameNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Assignement[]
+     */
+    public function getAssignements(): Collection
+    {
+        return $this->assignements;
+    }
+
+    public function addAssignement(Assignement $assignement): self
+    {
+        if (!$this->assignements->contains($assignement)) {
+            $this->assignements[] = $assignement;
+            $assignement->setPlanning($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAssignement(Assignement $assignement): self
+    {
+        if ($this->assignements->removeElement($assignement)) {
+            // set the owning side to null (unless already changed)
+            if ($assignement->getPlanning() === $this) {
+                $assignement->setPlanning(null);
+            }
+        }
 
         return $this;
     }
