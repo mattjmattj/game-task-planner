@@ -22,7 +22,9 @@ final class BasicPlanner implements PlannerInterface
             throw new ImpossiblePlanningException("Not enough people for the given task types.");
         }
 
-        // naive algorithm
+        if (0 === count($types)) {
+            return $assignement;
+        }
         for ($game = 0 ; $game < $nbGames ; $game++) {
             foreach($types as $k => $type) {
                 $assignement->addTask(
