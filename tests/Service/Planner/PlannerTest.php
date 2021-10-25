@@ -96,6 +96,27 @@ class PlannerTest extends KernelTestCase
     /**
      * @test
      */
+    public function shouldProvideAnEmptyAssignementWhenThereIsNothingToDo(): void
+    {
+        $kernel = self::bootKernel();
+        $this->assertSame('test', $kernel->getEnvironment());
+
+        $planner = static::getContainer()->get(PlannerInterface::class);
+
+        $planning = new Planning;
+
+        $planning->setTitle('Test planning');
+        $planning->setGameCount(3);
+        $planning->addPerson((new Person)->setName('person 1'));
+
+        $assignement = $planner->makeAssignement($planning);
+
+        $this->assertCount(0, $assignement->getTasks());
+    }
+
+    /**
+     * @test
+     */
     public function shouldProvideAValidAssignement(): void
     {
         $assignement = $this->generateTestAssignement();
