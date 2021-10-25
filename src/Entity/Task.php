@@ -18,11 +18,6 @@ class Task
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $label;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Person::class, inversedBy="tasks")
      */
     private $assignee;
@@ -47,18 +42,6 @@ class Task
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getLabel(): ?string
-    {
-        return $this->label;
-    }
-
-    public function setLabel(string $label): self
-    {
-        $this->label = $label;
-
-        return $this;
     }
 
     public function getAssignee(): ?Person

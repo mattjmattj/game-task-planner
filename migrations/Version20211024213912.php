@@ -30,7 +30,7 @@ final class Version20211024213912 extends AbstractMigration
         $this->addSql('CREATE TABLE planning_task_type (planning_id INTEGER NOT NULL, task_type_id INTEGER NOT NULL, PRIMARY KEY(planning_id, task_type_id))');
         $this->addSql('CREATE INDEX IDX_573D19513D865311 ON planning_task_type (planning_id)');
         $this->addSql('CREATE INDEX IDX_573D1951DAADA679 ON planning_task_type (task_type_id)');
-        $this->addSql('CREATE TABLE task (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, assignee_id INTEGER DEFAULT NULL, type_id INTEGER NOT NULL, assignement_id INTEGER NOT NULL, label VARCHAR(255) NOT NULL, game INTEGER NOT NULL)');
+        $this->addSql('CREATE TABLE task (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, assignee_id INTEGER DEFAULT NULL, type_id INTEGER NOT NULL, assignement_id INTEGER NOT NULL, game INTEGER NOT NULL)');
         $this->addSql('CREATE INDEX IDX_527EDB2559EC7D60 ON task (assignee_id)');
         $this->addSql('CREATE INDEX IDX_527EDB25C54C8C93 ON task (type_id)');
         $this->addSql('CREATE INDEX IDX_527EDB25698C4682 ON task (assignement_id)');
