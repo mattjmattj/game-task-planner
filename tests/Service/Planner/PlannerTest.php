@@ -18,14 +18,42 @@ class PlannerTest extends KernelTestCase
         $planning = new Planning;
 
         $planning->setTitle('Test planning');
-        $planning->setGameCount(3);
+        $planning->setGameCount(6);
         $planning->addTaskType((new TaskType)->setName('type 1'));
         $planning->addTaskType((new TaskType)->setName('type 2'));
+        $planning->addTaskType((new TaskType)->setName('type 3'));
+        $planning->addTaskType((new TaskType)->setName('type 4'));
         $planning->addPerson((new Person)->setName('person 1'));
         $planning->addPerson((new Person)->setName('person 2'));
         $planning->addPerson((new Person)->setName('person 3'));
+        $planning->addPerson((new Person)->setName('person 4'));
+        $planning->addPerson((new Person)->setName('person 5'));
+        $planning->addPerson((new Person)->setName('person 6'));
 
         return $planning;
+    }
+
+    /**
+     * Shortcut method for generating an assignement
+     */
+    private function generateTestAssignement(): Assignement
+    {
+        static $assignement;
+        if (!isset($assignement)) {
+            $kernel = self::bootKernel();
+            $this->assertSame('test', $kernel->getEnvironment());
+
+            $planner = static::getContainer()->get(PlannerInterface::class);
+
+            $planning = $this->makePlanning();
+
+            $assignement = $planner->makeAssignement($planning);
+
+            $this->assertInstanceOf(Assignement::class, $assignement);
+    
+            $this->assertEquals($planning, $assignement->getPlanning());
+        }
+        return $assignement;
     }
 
     /**
@@ -70,22 +98,38 @@ class PlannerTest extends KernelTestCase
      */
     public function shouldProvideAValidAssignement(): void
     {
-        $kernel = self::bootKernel();
-        $this->assertSame('test', $kernel->getEnvironment());
-
-        $planner = static::getContainer()->get(PlannerInterface::class);
-
-        $planning = $this->makePlanning();
-
-        $assignement = $planner->makeAssignement($planning);
-
-        $this->assertInstanceOf(Assignement::class, $assignement);
-
-        $this->assertEquals($planning, $assignement->getPlanning());
+        $assignement = $this->generateTestAssignement();
 
         $validator = static::getContainer()->get('validator');
         $errors = $validator->validate($assignement, new AssignementConstraint);
         
         $this->assertCount(0, $errors);
+    }
+
+    /**
+     * @test
+     * Check that nobody has more than one more assigned task than anyone else
+     */
+    public function shouldPreventPeopleFromHavingTooManyTasks(): void
+    {        
+        $assignement = $this->generateTestAssignement();
+
+        $tasksPerPerson = [
+            'person 1' => 0,
+            'person 2' => 0,
+            'person 3' => 0,
+            'person 4' => 0,
+            'person 5' => 0,
+            'person 6' => 0,
+        ];
+        foreach ($assignement->getTasks() as $task) {
+            /** @var Task $task */
+            $tasksPerPerson[$task->getAssignee()->__toString()]++;
+        }
+
+        $min = min($tasksPerPerson);
+        $max = max($tasksPerPerson);
+        
+        $this->assertLessThanOrEqual(1, $max - $min);
     }
 }
