@@ -110,4 +110,11 @@ class Assignement
 
         return $this;
     }
+
+    public function debugPrint()
+    {
+        foreach ($this->getTasks() as $task) {
+            printf("%d : %s -> %s\n", $task->getGame(), $task->getType(), $task->getAssignee());
+        }
+    }
 }
