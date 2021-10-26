@@ -40,15 +40,15 @@ class Planning
     private $gameCount;
 
     /**
-     * @ORM\OneToMany(targetEntity=Assignement::class, mappedBy="planning", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Assignment::class, mappedBy="planning", orphanRemoval=true)
      */
-    private $assignements;
+    private $assignments;
 
     public function __construct()
     {
         $this->taskTypes = new ArrayCollection();
         $this->persons = new ArrayCollection();
-        $this->assignements = new ArrayCollection();
+        $this->assignments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,29 +135,29 @@ class Planning
     }
 
     /**
-     * @return Collection|Assignement[]
+     * @return Collection|Assignment[]
      */
-    public function getAssignements(): Collection
+    public function getAssignments(): Collection
     {
-        return $this->assignements;
+        return $this->assignments;
     }
 
-    public function addAssignement(Assignement $assignement): self
+    public function addAssignment(Assignment $assignment): self
     {
-        if (!$this->assignements->contains($assignement)) {
-            $this->assignements[] = $assignement;
-            $assignement->setPlanning($this);
+        if (!$this->assignments->contains($assignment)) {
+            $this->assignments[] = $assignment;
+            $assignment->setPlanning($this);
         }
 
         return $this;
     }
 
-    public function removeAssignement(Assignement $assignement): self
+    public function removeAssignment(Assignment $assignment): self
     {
-        if ($this->assignements->removeElement($assignement)) {
+        if ($this->assignments->removeElement($assignment)) {
             // set the owning side to null (unless already changed)
-            if ($assignement->getPlanning() === $this) {
-                $assignement->setPlanning(null);
+            if ($assignment->getPlanning() === $this) {
+                $assignment->setPlanning(null);
             }
         }
 

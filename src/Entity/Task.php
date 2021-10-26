@@ -29,10 +29,10 @@ class Task
     private $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Assignement::class, inversedBy="tasks")
+     * @ORM\ManyToOne(targetEntity=Assignment::class, inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $assignement;
+    private $assignment;
 
     /**
      * @ORM\Column(type="integer")
@@ -68,14 +68,14 @@ class Task
         return $this;
     }
 
-    public function getAssignement(): ?Assignement
+    public function getAssignment(): ?Assignment
     {
-        return $this->assignement;
+        return $this->assignment;
     }
 
-    public function setAssignement(?Assignement $assignement): self
+    public function setAssignment(?Assignment $assignment): self
     {
-        $this->assignement = $assignement;
+        $this->assignment = $assignment;
 
         return $this;
     }

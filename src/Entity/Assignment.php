@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\AssignementRepository;
+use App\Repository\AssignmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=AssignementRepository::class)
+ * @ORM\Entity(repositoryClass=AssignmentRepository::class)
  */
-#[\App\Validator\Assignement]
-class Assignement
+#[\App\Validator\Assignment]
+class Assignment
 {
     /**
      * @ORM\Id
@@ -21,13 +21,13 @@ class Assignement
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Planning::class, inversedBy="assignements")
+     * @ORM\ManyToOne(targetEntity=Planning::class, inversedBy="assignments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $planning;
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="assignement", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="assignment", orphanRemoval=true)
      */
     private $tasks;
 
@@ -70,7 +70,7 @@ class Assignement
     {
         if (!$this->tasks->contains($task)) {
             $this->tasks[] = $task;
-            $task->setAssignement($this);
+            $task->setAssignment($this);
         }
 
         return $this;
@@ -80,8 +80,8 @@ class Assignement
     {
         if ($this->tasks->removeElement($task)) {
             // set the owning side to null (unless already changed)
-            if ($task->getAssignement() === $this) {
-                $task->setAssignement(null);
+            if ($task->getAssignment() === $this) {
+                $task->setAssignment(null);
             }
         }
 
@@ -116,5 +116,17 @@ class Assignement
         foreach ($this->getTasks() as $task) {
             printf("%d : %s -> %s\n", $task->getGame(), $task->getType(), $task->getAssignee());
         }
+    }
+
+    public function toArray(): array
+    {
+        $r = [];
+        foreach ($this->getTasksGroupedByGame() as $game => $tasks) {
+            $r[$game] = [];
+            foreach ($tasks as $task) {
+                $r[$game][$task->getType()] = $task->getAssignee();
+            }
+        }
+        return $r;
     }
 }

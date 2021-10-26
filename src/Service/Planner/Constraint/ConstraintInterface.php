@@ -2,9 +2,9 @@
 
 namespace App\Service\Planner\Constraint;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 
 interface ConstraintInterface
 {
-    public function validate(Assignement $assignement): bool;
+    public function validate(Assignment $assignment): bool;
 }

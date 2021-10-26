@@ -2,9 +2,9 @@
 
 namespace App\Tests\Service\Planner;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 use App\Entity\Task;
-use App\Service\AssignementGenerator;
+use App\Service\AssignmentGenerator;
 use App\Service\Planner\Constraint\ConstraintInterface;
 use App\Service\Planner\BasicPlanner;
 use App\Service\Planner\ConstraintBasedPlanner;
@@ -13,7 +13,7 @@ use App\Service\Planner\PlannerInterface;
 /**
  * A ConstraintBasedPlanner is a more evolved planner, that must obey
  * the base contract of any planner, but also make sure that the returned
- * Assignement is compatible with a provided set of constraints
+ * Assignment is compatible with a provided set of constraints
  */
 class ConstraintBasedPlannerTest extends AbstractPlannerTest
 {
@@ -21,7 +21,7 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
 
     public function setUp(): void
     {
-        $this->planner = new ConstraintBasedPlanner(new AssignementGenerator);
+        $this->planner = new ConstraintBasedPlanner(new AssignmentGenerator);
     }
 
     public function getPlanner(): PlannerInterface
@@ -32,13 +32,13 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
     /**
      * @test
      */
-    public function shouldProvideAnAssignementValidatingASetOfConstraints()
+    public function shouldProvideAnAssignmentValidatingASetOfConstraints()
     {   
         // dummy constraint that wants person 1 to do task type 2 on game 0
         $dummy1 = new class() implements ConstraintInterface {
-            public function validate(Assignement $assignement): bool
+            public function validate(Assignment $assignment): bool
             {
-                foreach($assignement->getTasks() as $task) {
+                foreach($assignment->getTasks() as $task) {
                     /** @var Task $task */
                     if ($task->getType()->getName() === 'type 2'
                         && $task->getGame() === 0) {
@@ -51,9 +51,9 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
 
         // dummy constraint that wants person 2 to do task type 1 on game 1
         $dummy2 = new class() implements ConstraintInterface {
-            public function validate(Assignement $assignement): bool
+            public function validate(Assignment $assignment): bool
             {
-                foreach($assignement->getTasks() as $task) {
+                foreach($assignment->getTasks() as $task) {
                     /** @var Task $task */
                     if ($task->getType()->getName() === 'type 1'
                         && $task->getGame() === 1) {
@@ -65,10 +65,10 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
         };
 
         $this->planner->setConstraints([$dummy1, $dummy2]);
-        $assignement = $this->generateTestAssignement($this->planner, $this->makePlanning());
+        $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning());
 
-        $this->assertTrue($dummy1->validate($assignement));
-        $this->assertTrue($dummy2->validate($assignement));
+        $this->assertTrue($dummy1->validate($assignment));
+        $this->assertTrue($dummy2->validate($assignment));
 
     }
 }

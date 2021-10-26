@@ -2,17 +2,17 @@
 
 namespace App\Service\Planner;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 use App\Entity\Planning;
 use App\Entity\Task;
 
 final class BasicPlanner implements PlannerInterface
 {
-    public function makeAssignement(Planning $planning): Assignement
+    public function makeAssignment(Planning $planning): Assignment
     {
-        $assignement = new Assignement;
+        $assignment = new Assignment;
 
-        $assignement->setPlanning($planning);
+        $assignment->setPlanning($planning);
 
         $persons = $planning->getPersons();
         $types = $planning->getTaskTypes();
@@ -23,7 +23,7 @@ final class BasicPlanner implements PlannerInterface
         }
 
         if (0 === count($types)) {
-            return $assignement;
+            return $assignment;
         }
 
         // we'll use a priority queue initialized with every person having a priority
@@ -45,7 +45,7 @@ final class BasicPlanner implements PlannerInterface
                 $assignee = $queueTop['data'];
                 $priority = $queueTop['priority'];
 
-                $assignement->addTask(
+                $assignment->addTask(
                     (new Task)
                         ->setAssignee($assignee)
                         ->setType($type)
@@ -60,6 +60,6 @@ final class BasicPlanner implements PlannerInterface
             }
         }
 
-        return $assignement;
+        return $assignment;
     }
 }

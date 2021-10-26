@@ -2,21 +2,21 @@
 
 namespace App\Tests\Validator;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\Task;
 use App\Entity\TaskType;
-use App\Validator\Assignement as AssignementConstraint;
-use App\Validator\AssignementValidator as AssignementValidator;
+use App\Validator\Assignment as AssignmentConstraint;
+use App\Validator\AssignmentValidator as AssignmentValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-final class AssignementTest extends ConstraintValidatorTestCase
+final class AssignmentTest extends ConstraintValidatorTestCase
 {
     public function createValidator()
     {
-        return new AssignementValidator();
+        return new AssignmentValidator();
     }
 
     private function makePlanning(): Planning
@@ -34,46 +34,46 @@ final class AssignementTest extends ConstraintValidatorTestCase
         return $planning;
     }
 
-    private function makeAssignement(Planning $planning): Assignement
+    private function makeAssignment(Planning $planning): Assignment
     {
         $planning = $this->makePlanning();
 
-        $assignement = new Assignement;
-        $assignement->setPlanning($planning);
+        $assignment = new Assignment;
+        $assignment->setPlanning($planning);
 
-        return $assignement;
+        return $assignment;
     }
 
     /**
      * @test
      */
-    public function shouldValidateAPerfectAssignement(): void
+    public function shouldValidateAPerfectAssignment(): void
     {
         $planning = $this->makePlanning();
         $persons = $planning->getPersons();
         $taskTypes = $planning->getTaskTypes();
-        $assignement = $this->makeAssignement($planning);
+        $assignment = $this->makeAssignment($planning);
 
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[0])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[1])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[0])->setGame(1)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[2])->setType($taskTypes[1])->setGame(1)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[2])->setType($taskTypes[0])->setGame(2)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[1])->setGame(2)
         );
 
-        $this->validator->validate($assignement, new AssignementConstraint);
+        $this->validator->validate($assignment, new AssignmentConstraint);
         $this->assertNoViolation();
     }
 
@@ -87,30 +87,30 @@ final class AssignementTest extends ConstraintValidatorTestCase
         $planning = $this->makePlanning();
         $persons = $planning->getPersons();
         $taskTypes = $planning->getTaskTypes();
-        $assignement = $this->makeAssignement($planning);
+        $assignment = $this->makeAssignment($planning);
 
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[0])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[1])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[0])->setGame(1)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[2])->setType($taskTypes[1])->setGame(1)
         );
         // removing one task from previous test
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[1])->setGame(2)
         );
 
-        $constraint = new AssignementConstraint;
-        $this->validator->validate($assignement, $constraint);
+        $constraint = new AssignmentConstraint;
+        $this->validator->validate($assignment, $constraint);
 
         $this->buildViolation($constraint->message)
-            ->setCode(AssignementConstraint::MISSING_TASKS_ERROR)
+            ->setCode(AssignmentConstraint::MISSING_TASKS_ERROR)
             ->assertRaised();
     }
 
@@ -122,33 +122,33 @@ final class AssignementTest extends ConstraintValidatorTestCase
         $planning = $this->makePlanning();
         $persons = $planning->getPersons();
         $taskTypes = $planning->getTaskTypes();
-        $assignement = $this->makeAssignement($planning);
+        $assignment = $this->makeAssignment($planning);
 
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[0])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[1])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[0])->setGame(1)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[2])->setType($taskTypes[1])->setGame(1)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[2])->setType($taskTypes[0])->setGame(2)
         );
         // second type[0] task for game 2
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[0])->setGame(2)
         );
 
-        $constraint = new AssignementConstraint;
-        $this->validator->validate($assignement, $constraint);
+        $constraint = new AssignmentConstraint;
+        $this->validator->validate($assignment, $constraint);
 
         $this->buildViolation($constraint->message)
-            ->setCode(AssignementConstraint::DUPLICATED_TASKS_ERROR)
+            ->setCode(AssignmentConstraint::DUPLICATED_TASKS_ERROR)
             ->assertRaised();
     }
 
@@ -160,33 +160,33 @@ final class AssignementTest extends ConstraintValidatorTestCase
         $planning = $this->makePlanning();
         $persons = $planning->getPersons();
         $taskTypes = $planning->getTaskTypes();
-        $assignement = $this->makeAssignement($planning);
+        $assignment = $this->makeAssignment($planning);
 
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[0])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[1])->setGame(0)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[0])->setGame(1)
         );
         // person 1 will do both tasks
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[1])->setType($taskTypes[1])->setGame(1)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[2])->setType($taskTypes[0])->setGame(2)
         );
-        $assignement->addTask(
+        $assignment->addTask(
             (new Task)->setAssignee($persons[0])->setType($taskTypes[1])->setGame(2)
         );
 
-        $constraint = new AssignementConstraint;
-        $this->validator->validate($assignement, $constraint);
+        $constraint = new AssignmentConstraint;
+        $this->validator->validate($assignment, $constraint);
 
         $this->buildViolation($constraint->message)
-            ->setCode(AssignementConstraint::MULTIPLE_TASKS_ERROR)
+            ->setCode(AssignmentConstraint::MULTIPLE_TASKS_ERROR)
             ->assertRaised();
     }
 

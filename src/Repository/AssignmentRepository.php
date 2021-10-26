@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Assignement|null find($id, $lockMode = null, $lockVersion = null)
- * @method Assignement|null findOneBy(array $criteria, array $orderBy = null)
- * @method Assignement[]    findAll()
- * @method Assignement[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Assignment|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Assignment|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Assignment[]    findAll()
+ * @method Assignment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AssignementRepository extends ServiceEntityRepository
+class AssignmentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Assignement::class);
+        parent::__construct($registry, Assignment::class);
     }
 
     // /**
-    //  * @return Assignement[] Returns an array of Assignement objects
+    //  * @return Assignment[] Returns an array of Assignment objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class AssignementRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Assignement
+    public function findOneBySomeField($value): ?Assignment
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.exampleField = :val')

@@ -2,10 +2,10 @@
 
 namespace App\Service\Planner;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 use App\Entity\Planning;
 use App\Entity\Task;
-use App\Service\AssignementGenerator;
+use App\Service\AssignmentGenerator;
 use App\Service\Planner\Constraint\ConstraintInterface;
 
 final class ConstraintBasedPlanner implements PlannerInterface
@@ -14,7 +14,7 @@ final class ConstraintBasedPlanner implements PlannerInterface
     private array $constraints = [];
 
     public function __construct(
-        private AssignementGenerator $assignementGenerator
+        private AssignmentGenerator $assignmentGenerator
     )
     {}
 
@@ -24,18 +24,18 @@ final class ConstraintBasedPlanner implements PlannerInterface
         return $this;
     }
 
-    public function makeAssignement(Planning $planning): Assignement
+    public function makeAssignment(Planning $planning): Assignment
     {
-        foreach ($this->assignementGenerator->assignements($planning) as /** @var Assignement */ $assignement) {
+        foreach ($this->assignmentGenerator->assignments($planning) as /** @var Assignment */ $assignment) {
             $ok = true;
             foreach ($this->constraints as /** @var ConstraintInterface */ $constraint) {
-                if (!$constraint->validate($assignement)) {
+                if (!$constraint->validate($assignment)) {
                     $ok = false;
                     break;
                 }
             }
             if ($ok) {
-                return $assignement;
+                return $assignment;
             }
         }
 

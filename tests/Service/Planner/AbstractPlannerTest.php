@@ -2,14 +2,14 @@
 
 namespace App\Tests\Service\Planner;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
 use App\Service\Planner\BasicPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
 use App\Service\Planner\PlannerInterface;
-use App\Validator\Assignement as AssignementConstraint;
+use App\Validator\Assignment as AssignmentConstraint;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -36,13 +36,13 @@ abstract class AbstractPlannerTest extends KernelTestCase
         //not enough people
 
         $this->expectException(ImpossiblePlanningException::class);
-        $assignement = $this->getPlanner()->makeAssignement($planning);
+        $assignment = $this->getPlanner()->makeAssignment($planning);
     }
 
     /**
      * @test
      */
-    public function shouldProvideAnEmptyAssignementWhenThereIsNothingToDo(): void
+    public function shouldProvideAnEmptyAssignmentWhenThereIsNothingToDo(): void
     {
         $planning = new Planning;
 
@@ -50,20 +50,20 @@ abstract class AbstractPlannerTest extends KernelTestCase
         $planning->setGameCount(3);
         $planning->addPerson((new Person)->setName('person 1'));
 
-        $assignement = $this->getPlanner()->makeAssignement($planning);
+        $assignment = $this->getPlanner()->makeAssignment($planning);
 
-        $this->assertCount(0, $assignement->getTasks());
+        $this->assertCount(0, $assignment->getTasks());
     }
 
     /**
      * @test
      */
-    public function shouldProvideAValidAssignement(): void
+    public function shouldProvideAValidAssignment(): void
     {
-        $assignement = $this->generateTestAssignement($this->getPlanner(), $this->makePlanning());
+        $assignment = $this->generateTestAssignment($this->getPlanner(), $this->makePlanning());
 
         $validator = static::getContainer()->get('validator');
-        $errors = $validator->validate($assignement, new AssignementConstraint);
+        $errors = $validator->validate($assignment, new AssignmentConstraint);
         
         $this->assertCount(0, $errors);
     }
@@ -74,7 +74,7 @@ abstract class AbstractPlannerTest extends KernelTestCase
      */
     public function shouldPreventPeopleFromHavingTooManyTasks(): void
     {        
-        $assignement = $this->generateTestAssignement($this->getPlanner(), $this->makePlanning());
+        $assignment = $this->generateTestAssignment($this->getPlanner(), $this->makePlanning());
 
         $tasksPerPerson = [
             'person 1' => 0,
@@ -84,7 +84,7 @@ abstract class AbstractPlannerTest extends KernelTestCase
             'person 5' => 0,
             'person 6' => 0,
         ];
-        foreach ($assignement->getTasks() as $task) {
+        foreach ($assignment->getTasks() as $task) {
             /** @var Task $task */
             $tasksPerPerson[$task->getAssignee()->__toString()]++;
         }

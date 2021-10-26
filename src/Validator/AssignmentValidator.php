@@ -2,38 +2,38 @@
 
 namespace App\Validator;
 
-use App\Entity\Assignement as AssignementEntity;
+use App\Entity\Assignment as AssignmentEntity;
 use App\Entity\Task;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class AssignementValidator extends ConstraintValidator
+class AssignmentValidator extends ConstraintValidator
 {
     
-    public function validate($assignement, Constraint $constraint)
+    public function validate($assignment, Constraint $constraint)
     {
-        if (!$constraint instanceof Assignement) {
+        if (!$constraint instanceof Assignment) {
             return;
         }
 
-        if (!$assignement instanceof AssignementEntity) {
+        if (!$assignment instanceof AssignmentEntity) {
             return;
         }
 
-        $taskTypes = $assignement->getPlanning()->getTaskTypes();
-        $gameCount = $assignement->getPlanning()->getGameCount();
+        $taskTypes = $assignment->getPlanning()->getTaskTypes();
+        $gameCount = $assignment->getPlanning()->getGameCount();
         $totalExpectedTasks = count($taskTypes) * $gameCount;
 
-        if (count($assignement->getTasks()) !== $totalExpectedTasks) {
+        if (count($assignment->getTasks()) !== $totalExpectedTasks) {
             $this->context->buildViolation($constraint->message)
-                ->setCode(Assignement::MISSING_TASKS_ERROR)
+                ->setCode(Assignment::MISSING_TASKS_ERROR)
                 ->addViolation();
         }
 
         // we will keep track of the tasks we meet by person and by type, for each game
         $types = $persons = [];
         
-        foreach ($assignement->getTasks() as $task) {
+        foreach ($assignment->getTasks() as $task) {
             /** @var Task $task */
 
             $type = $task->getType()->__toString();
@@ -42,13 +42,13 @@ class AssignementValidator extends ConstraintValidator
             
             if (isset($types[$game][$type])) {
                 $this->context->buildViolation($constraint->message)
-                    ->setCode(Assignement::DUPLICATED_TASKS_ERROR)
+                    ->setCode(Assignment::DUPLICATED_TASKS_ERROR)
                     ->addViolation();
             }
 
             if (isset($persons[$game][$person])) {
                 $this->context->buildViolation($constraint->message)
-                    ->setCode(Assignement::MULTIPLE_TASKS_ERROR)
+                    ->setCode(Assignment::MULTIPLE_TASKS_ERROR)
                     ->addViolation();
             }
 

@@ -42,7 +42,7 @@ class BasicPlannerTest extends AbstractPlannerTest
     public function shouldPreventAssigningTheSameTaskTypeToTheSamePeople(): void
     {
         $this->markTestSkipped('Not implemented yet');
-        $assignement = $this->generateTestAssignement($this->planner, $this->makePlanning());
+        $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning());
 
         $details = [
             'type 1' => [
@@ -79,7 +79,7 @@ class BasicPlannerTest extends AbstractPlannerTest
             ],
         ];
 
-        foreach ($assignement->getTasks() as $task) {
+        foreach ($assignment->getTasks() as $task) {
             /** @var Task $task */
             $details[$task->getType()->__toString()][$task->getAssignee()->__toString()]++;
         }

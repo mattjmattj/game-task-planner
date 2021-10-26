@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service\Planner;
 
-use App\Entity\Assignement;
+use App\Entity\Assignment;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
@@ -27,15 +27,15 @@ trait PlannerTestTrait
     }
 
     /**
-     * Shortcut method for generating an assignement
+     * Shortcut method for generating an assignment
      */
-    public function generateTestAssignement(PlannerInterface $planner, Planning $planning): Assignement
+    public function generateTestAssignment(PlannerInterface $planner, Planning $planning): Assignment
     {
-        $assignement = $planner->makeAssignement($planning);
+        $assignment = $planner->makeAssignment($planning);
 
-        $this->assertInstanceOf(Assignement::class, $assignement);    
-        $this->assertEquals($planning, $assignement->getPlanning());
+        $this->assertInstanceOf(Assignment::class, $assignment);    
+        $this->assertEquals($planning, $assignment->getPlanning());
         
-        return $assignement;
+        return $assignment;
     }
 }
