@@ -4,6 +4,7 @@ namespace App\Tests\Service\Planner;
 
 use App\Entity\Assignement;
 use App\Entity\Task;
+use App\Service\AssignementGenerator;
 use App\Service\Planner\Constraint\ConstraintInterface;
 use App\Service\Planner\BasicPlanner;
 use App\Service\Planner\ConstraintBasedPlanner;
@@ -20,7 +21,7 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
 
     public function setUp(): void
     {
-        $this->planner = new ConstraintBasedPlanner(new BasicPlanner);
+        $this->planner = new ConstraintBasedPlanner(new AssignementGenerator);
     }
 
     public function getPlanner(): PlannerInterface
