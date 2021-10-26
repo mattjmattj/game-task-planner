@@ -10,9 +10,16 @@ use App\Service\Planner\PlannerInterface;
  */
 class BasicPlannerTest extends AbstractPlannerTest
 {
+    private BasicPlanner $planner;
+
     public function setUp(): void
     {
-        $this->setPlanner(new BasicPlanner);
+        $this->planner =new BasicPlanner;
+    }
+
+    public function getPlanner(): PlannerInterface
+    {
+        return $this->planner;
     }
 
     /**
