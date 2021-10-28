@@ -15,5 +15,5 @@ not even sure that it will work at some point.
 ## TDD
 
 Some commits are marked `#tdd`. They should not have been commited individually but, for teaching purposes,
-I decided to commit between every TDD _moment_, with the idea of expliciting my though process
+I decided to commit between every TDD _moment_, with the idea of expliciting my thought process
 while designing and developping the application, and what I learn during the journey.
