@@ -2,3 +2,14 @@ services:
     App\Service\Planner\PlannerInterface:
         public: true
         alias: 'App\Service\Planner\BasicPlanner'
+    
+    App\Service\AssignmentGenerator:
+        public: true
+        arguments:
+            $combinationGenerator: '@App\Service\Math\CombinationGenerator'
+            $validator: '@validator'
+
+    App\Service\Planner\ConstraintBasedPlanner:
+        public: true
+        arguments:
+            $assignmentGenerator: '@App\Service\AssignmentGenerator'

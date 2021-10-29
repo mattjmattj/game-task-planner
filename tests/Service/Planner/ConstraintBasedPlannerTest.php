@@ -21,7 +21,7 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
 
     public function setUp(): void
     {
-        $this->planner = new ConstraintBasedPlanner(new AssignmentGenerator);
+        $this->planner = static::getContainer()->get(ConstraintBasedPlanner::class);
     }
 
     public function getPlanner(): PlannerInterface

@@ -114,7 +114,7 @@ class Assignment
     public function debugPrint()
     {
         foreach ($this->getTasks() as $task) {
-            printf("%d : %s -> %s\n", $task->getGame(), $task->getType(), $task->getAssignee());
+            printf("game #%d : %s -> %s\n", $task->getGame(), $task->getType(), $task->getAssignee());
         }
     }
 

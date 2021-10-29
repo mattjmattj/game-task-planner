@@ -92,4 +92,11 @@ class Task
         return $this;
     }
 
+    public function equals(Task $task): bool
+    {
+        return $this->getAssignee() === $task->getAssignee()
+            && $this->getGame() === $task->getGame()
+            && $this->getType() === $task->getType();
+    }
+
 }
