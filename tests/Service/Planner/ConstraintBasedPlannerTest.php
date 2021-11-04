@@ -9,6 +9,7 @@ use App\Service\Planner\Constraint\ConstraintInterface;
 use App\Service\Planner\BasicPlanner;
 use App\Service\Planner\Constraint\NotTooManyTasksConstraint;
 use App\Service\Planner\ConstraintBasedPlanner;
+use App\Service\Planner\ImpossiblePlanningException;
 use App\Service\Planner\PlannerInterface;
 
 /**
@@ -77,6 +78,23 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
 
         $this->assertTrue($dummy1->validate($assignment));
         $this->assertTrue($dummy2->validate($assignment));
+    }
 
+    /**
+     * @test
+     */
+    public function shouldThrowWhenPlanningIsImpossibleWithTheGivenConstraints()
+    {
+        $this->planner->addConstraint(
+            new class() implements ConstraintInterface {
+                public function validate(Assignment $assignment): bool
+                {
+                    return false;
+                }
+            }
+        );
+
+        $this->expectException(ImpossiblePlanningException::class);
+        $this->generateTestAssignment($this->planner, $this->makePlanning(2, 3, 2));
     }
 }
