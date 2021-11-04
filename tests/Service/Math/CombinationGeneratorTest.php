@@ -51,4 +51,21 @@ class CombinationGeneratorTest extends TestCase
             [5],
         ], $result);
     }
+
+    /**
+     * @test
+     */
+    public function shouldGenerateEveryPermutationOfAList()
+    {
+        $list = [1, 2, 3];
+        $result = iterator_to_array((new CombinationGenerator)->permutations($list), false);
+        $this->assertEqualsCanonicalizing([
+            [1, 2, 3],
+            [1, 3, 2],
+            [2, 1, 3],
+            [2, 3, 1],
+            [3, 1, 2],
+            [3, 2, 1]
+        ], $result);
+    }
 }
