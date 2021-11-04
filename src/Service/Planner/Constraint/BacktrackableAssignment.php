@@ -22,6 +22,8 @@ final class BacktrackableAssignment
      */
     private array $taskSlots;
 
+    private array $availableTaskSlots;
+
     public function __construct(
         private Planning $planning
     )
@@ -30,6 +32,7 @@ final class BacktrackableAssignment
             $this->taskSlots[$game] = new \SplObjectStorage;
             foreach ($this->planning->getTaskTypes() as $type) {
                 $this->taskSlots[$game][$type] = false;
+                $this->availableTaskSlots[] = [$game, $type];
             }
         }
     }
@@ -57,12 +60,17 @@ final class BacktrackableAssignment
     public function setTask(int $game, TaskType $type, Person $person): self
     {
         $this->taskSlots[$game][$type] = $person;
+        $k = array_search([$game, $type], $this->availableTaskSlots, true);
+        if (false !== $k) {
+            unset($this->availableTaskSlots[$k]);
+        }
         return $this;
     }
 
     public function unsetTask(int $game, TaskType $type): self
     {
         $this->taskSlots[$game][$type] = false;
+        $this->availableTaskSlots[] = [$game, $type];
         return $this;
     }
 
@@ -87,16 +95,7 @@ final class BacktrackableAssignment
 
     public function getAvailableTaskSlots(): array
     {
-        $availableTaskSlots = [];
-        foreach ($this->taskSlots as $game => $gameTaskSlots) {
-            foreach ($gameTaskSlots as $type) {
-                $person = $gameTaskSlots[$type];
-                if ($person === false) {
-                    $availableTaskSlots[] = [$game, $type];
-                }
-            }
-        }
-        return $availableTaskSlots;
+        return array_values($this->availableTaskSlots);
     }
 
     public function isTaskSlotAvailable(int $game, TaskType $type): bool
