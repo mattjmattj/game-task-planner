@@ -7,6 +7,7 @@ use App\Entity\Task;
 use App\Service\AssignmentGenerator;
 use App\Service\Planner\Constraint\ConstraintInterface;
 use App\Service\Planner\BasicPlanner;
+use App\Service\Planner\Constraint\NotTooManyTasksConstraint;
 use App\Service\Planner\ConstraintBasedPlanner;
 use App\Service\Planner\PlannerInterface;
 
@@ -22,6 +23,10 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
     public function setUp(): void
     {
         $this->planner = static::getContainer()->get(ConstraintBasedPlanner::class);
+
+        // we add this constraint in order to implement the needed 
+        // contracts defined in AbstractPlannerTest
+        $this->planner->addConstraint(new NotTooManyTasksConstraint);
     }
 
     public function getPlanner(): PlannerInterface
@@ -64,8 +69,11 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
             }
         };
 
-        $this->planner->setConstraints([$dummy1, $dummy2]);
-        $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning());
+        $this->planner->addConstraint($dummy1);
+        $this->planner->addConstraint($dummy2);
+
+        // P(3, 2)^2 = 36
+        $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(2, 3, 2));
 
         $this->assertTrue($dummy1->validate($assignment));
         $this->assertTrue($dummy2->validate($assignment));

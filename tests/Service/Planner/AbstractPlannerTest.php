@@ -7,6 +7,7 @@ use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
 use App\Service\Planner\BasicPlanner;
+use App\Service\Planner\Constraint\NotTooManyTasksConstraint;
 use App\Service\Planner\ImpossiblePlanningException;
 use App\Service\Planner\PlannerInterface;
 use App\Validator\Assignment as AssignmentConstraint;
@@ -76,22 +77,6 @@ abstract class AbstractPlannerTest extends KernelTestCase
     {        
         $assignment = $this->generateTestAssignment($this->getPlanner(), $this->makePlanning());
 
-        $tasksPerPerson = [
-            'person 1' => 0,
-            'person 2' => 0,
-            'person 3' => 0,
-            'person 4' => 0,
-            'person 5' => 0,
-            'person 6' => 0,
-        ];
-        foreach ($assignment->getTasks() as $task) {
-            /** @var Task $task */
-            $tasksPerPerson[$task->getAssignee()->__toString()]++;
-        }
-
-        $min = min($tasksPerPerson);
-        $max = max($tasksPerPerson);
-        
-        $this->assertLessThanOrEqual(1, $max - $min);
+        $this->assertTrue((new NotTooManyTasksConstraint)->validate($assignment));
     }
 }

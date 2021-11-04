@@ -24,6 +24,12 @@ final class ConstraintBasedPlanner implements PlannerInterface
         return $this;
     }
 
+    public function addConstraint(ConstraintInterface $constraint): self
+    {
+        $this->constraints[] = $constraint;
+        return $this;
+    }
+
     public function makeAssignment(Planning $planning): Assignment
     {
         foreach ($this->assignmentGenerator->assignments($planning) as /** @var Assignment */ $assignment) {
