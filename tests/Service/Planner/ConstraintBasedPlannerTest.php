@@ -7,6 +7,7 @@ use App\Entity\Task;
 use App\Service\AssignmentGenerator;
 use App\Service\Planner\Constraint\ConstraintInterface;
 use App\Service\Planner\BasicPlanner;
+use App\Service\Planner\Constraint\AssignmentValidatorConstraint;
 use App\Service\Planner\Constraint\NotTooManyTasksConstraint;
 use App\Service\Planner\ConstraintBasedPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
@@ -24,10 +25,12 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
     public function setUp(): void
     {
         $this->planner = static::getContainer()->get(ConstraintBasedPlanner::class);
+        $validator = static::getContainer()->get('validator');
 
         // we add this constraint in order to implement the needed 
         // contracts defined in AbstractPlannerTest
         $this->planner->addConstraint(new NotTooManyTasksConstraint);
+        $this->planner->addConstraint(new AssignmentValidatorConstraint($validator));
     }
 
     public function getPlanner(): PlannerInterface
