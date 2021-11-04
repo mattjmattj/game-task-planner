@@ -32,16 +32,23 @@ final class ConstraintBasedPlanner implements PlannerInterface
 
     public function makeAssignment(Planning $planning): Assignment
     {
-        foreach ($this->assignmentGenerator->assignments($planning) as /** @var Assignment */ $assignment) {
-            foreach ($this->constraints as /** @var ConstraintInterface */ $constraint) {
-                if (!$constraint->validate($assignment)) {
-                    continue 2;
-                }
-            }
-            
+        foreach ($this->assignmentGenerator->assignments($planning) as $assignment) {
+            if (!$this->validate($assignment)) {
+                continue;
+            }            
             return $assignment;
         }
 
         throw new ImpossiblePlanningException('Impossible to satisfy the given set of constraints');
+    }
+
+    public function validate(Assignment $assignment): bool
+    {
+        foreach ($this->constraints as $constraint) {
+            if (!$constraint->validate($assignment)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
