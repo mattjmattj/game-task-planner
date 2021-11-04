@@ -10,7 +10,7 @@ use App\Service\Planner\PlannerInterface;
 
 trait PlannerTestTrait
 {
-    public function makePlanning(int $nbGames = 6, int $nbPersons = 6, int $nbTaskTypes = 4): Planning
+    public function makePlanning(int $nbGames = 3, int $nbPersons = 6, int $nbTaskTypes = 4): Planning
     {
         $planning = new Planning;
 
