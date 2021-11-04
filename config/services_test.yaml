@@ -7,7 +7,6 @@ services:
         public: true
         arguments:
             $combinationGenerator: '@App\Service\Math\CombinationGenerator'
-            $validator: '@validator'
 
     App\Service\Planner\ConstraintBasedPlanner:
         public: true

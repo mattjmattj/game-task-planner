@@ -124,9 +124,28 @@ class Assignment
         foreach ($this->getTasksGroupedByGame() as $game => $tasks) {
             $r[$game] = [];
             foreach ($tasks as $task) {
-                $r[$game][$task->getType()] = $task->getAssignee();
+                $r[$game][$this->getPlanning()->getTaskTypes()->indexOf($task->getType())] = $task->getAssignee();
             }
         }
         return $r;
+    }
+
+    public function equals (Assignment $assignment)
+    {
+        if ($this->getPlanning() !== $assignment->getPlanning()) {
+            return false;
+        }
+        foreach ($this->getTasks() as $mytask) {
+            $found = false;
+            foreach ($assignment->getTasks() as $theirtask) {
+                if ($mytask->equals($theirtask)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                return false;
+            }
+        }
     }
 }
