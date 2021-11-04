@@ -22,7 +22,9 @@ final class BacktrackableAssignment
      */
     private array $taskSlots;
 
-    private array $availableTaskSlots;
+    private array $availableTaskSlots = [];
+
+    private array $availablePersons = [];
 
     public function __construct(
         private Planning $planning
@@ -33,6 +35,9 @@ final class BacktrackableAssignment
             foreach ($this->planning->getTaskTypes() as $type) {
                 $this->taskSlots[$game][$type] = false;
                 $this->availableTaskSlots[] = [$game, $type];
+            }
+            foreach ($this->planning->getPersons() as $person) {
+                $this->availablePersons[$game][] = $person;
             }
         }
     }
@@ -60,17 +65,28 @@ final class BacktrackableAssignment
     public function setTask(int $game, TaskType $type, Person $person): self
     {
         $this->taskSlots[$game][$type] = $person;
+
         $k = array_search([$game, $type], $this->availableTaskSlots, true);
         if (false !== $k) {
             unset($this->availableTaskSlots[$k]);
         }
+
+        $k = array_search($person, $this->availablePersons[$game]);
+        if (false !== $k) {
+            unset($this->availablePersons[$game][$k]);
+        }
+
         return $this;
     }
 
     public function unsetTask(int $game, TaskType $type): self
     {
+        $person = $this->taskSlots[$game][$type];
         $this->taskSlots[$game][$type] = false;
         $this->availableTaskSlots[] = [$game, $type];
+        if ($person !== false) {
+            $this->availablePersons[$game][] = $person;
+        }
         return $this;
     }
 
@@ -79,18 +95,7 @@ final class BacktrackableAssignment
     {
         // we will return the persons not already assigned to a task for this game
         // TODO keep track of the domain of each slot (game x type) along the way
-        $assignedPersons = [];
-        foreach ($this->taskSlots[$game] as $type) {
-            $person = $this->taskSlots[$game][$type];
-            if (!!$person) {
-                $assignedPersons[] = $person;
-            }
-        }
-        $availablePersons = array_diff(
-            $this->planning->getPersons()->toArray(),
-            $assignedPersons
-        );
-        return array_values($availablePersons);
+        return array_values($this->availablePersons[$game]);
     }
 
     public function getAvailableTaskSlots(): array
