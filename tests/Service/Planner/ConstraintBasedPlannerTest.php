@@ -81,6 +81,14 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
 
         $this->assertTrue($dummy1->validate($assignment));
         $this->assertTrue($dummy2->validate($assignment));
+
+
+        // P(5, 2)^6 = 46,656,000,000
+        $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 5, 2));
+
+        $this->assertTrue($dummy1->validate($assignment));
+        $this->assertTrue($dummy2->validate($assignment));
+        // $assignment->debugPrint();
     }
 
     /**
