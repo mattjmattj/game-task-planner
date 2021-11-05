@@ -9,6 +9,6 @@ services:
         arguments:
             $combinationGenerator: '@App\Service\Math\CombinationGenerator'
 
-    App\Service\Planner\ConstraintBasedPlanner:
+    App\Service\Planner\BacktrackingPlanner:
         arguments:
             $assignmentGenerator: '@App\Service\AssignmentGenerator'

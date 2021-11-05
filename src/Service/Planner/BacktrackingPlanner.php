@@ -11,7 +11,7 @@ use App\Service\Planner\Constraint\BacktrackableAssignment;
 use App\Service\Planner\Constraint\ConstraintInterface;
 use App\Service\Planner\Constraint\RejectableConstraintInterface;
 
-final class ConstraintBasedPlanner implements PlannerInterface
+final class BacktrackingPlanner implements PlannerInterface
 {
     /** @var ConstraintInterface[] */
     private array $constraints = [];
@@ -44,7 +44,7 @@ final class ConstraintBasedPlanner implements PlannerInterface
         return $assignment;
     }
 
-    private function validate(Assignment $assignment): bool
+    private function validate(BacktrackableAssignment $assignment): bool
     {
         foreach ($this->constraints as $constraint) {
             if (!$constraint->validate($assignment)) {
@@ -54,7 +54,7 @@ final class ConstraintBasedPlanner implements PlannerInterface
         return true;
     }
 
-    private function reject(Assignment $assignment): bool
+    private function reject(BacktrackableAssignment $assignment): bool
     {
         foreach ($this->constraints as $constraint) {
             if ($constraint instanceof RejectableConstraintInterface
@@ -88,12 +88,11 @@ final class ConstraintBasedPlanner implements PlannerInterface
     {
         $this->backtrackingCalls++;
 
-        $assignment = $ba->makeAssignment();
-        if ($this->validate($assignment)) {
-            return $assignment;
+        if ($this->validate($ba)) {
+            return $ba->makeAssignment();
         }
 
-        if ($this->reject($assignment)) {
+        if ($this->reject($ba)) {
             return null;
         }
 
@@ -113,7 +112,7 @@ final class ConstraintBasedPlanner implements PlannerInterface
         return null;
     }
 
-    public function getBacktrackingCall(): int
+    public function getBacktrackingCalls(): int
     {
         return $this->backtrackingCalls;
     }
