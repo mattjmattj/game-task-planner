@@ -4,10 +4,9 @@ namespace App\Tests\Service\Planner;
 
 use App\Entity\Assignment;
 use App\Entity\Task;
-use App\Service\AssignmentGenerator;
 use App\Service\Planner\Constraint\ConstraintInterface;
-use App\Service\Planner\BasicPlanner;
 use App\Service\Planner\Constraint\AssignmentValidatorConstraint;
+use App\Service\Planner\Constraint\NoSpecialistConstraint;
 use App\Service\Planner\Constraint\NotTooManyTasksConstraint;
 use App\Service\Planner\ConstraintBasedPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
@@ -31,6 +30,9 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
         // contracts defined in AbstractPlannerTest
         $this->planner->addConstraint(new NotTooManyTasksConstraint);
         $this->planner->addConstraint(new AssignmentValidatorConstraint($validator));
+
+        // + no specialist
+        $this->planner->addConstraint(new NoSpecialistConstraint);
     }
 
     public function getPlanner(): PlannerInterface
@@ -112,5 +114,65 @@ class ConstraintBasedPlannerTest extends AbstractPlannerTest
 
         $this->expectException(ImpossiblePlanningException::class);
         $this->generateTestAssignment($this->planner, $this->makePlanning(2, 3, 2));
+    }
+
+    /**
+     * @test
+     * Check that nobody is given more of a specific type of task than anyone else
+     */
+    public function shouldPreventAssigningTheSameTaskTypeToTheSamePeople(): void
+    {
+        $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 7, 4));
+
+        $details = [
+            'type 1' => [
+                'person 1' => 0,
+                'person 2' => 0,
+                'person 3' => 0,
+                'person 4' => 0,
+                'person 5' => 0,
+                'person 6' => 0,
+                'person 7' => 0,
+            ],
+            'type 2' => [
+                'person 1' => 0,
+                'person 2' => 0,
+                'person 3' => 0,
+                'person 4' => 0,
+                'person 5' => 0,
+                'person 6' => 0,
+                'person 7' => 0,
+            ],
+            'type 3' => [
+                'person 1' => 0,
+                'person 2' => 0,
+                'person 3' => 0,
+                'person 4' => 0,
+                'person 5' => 0,
+                'person 6' => 0,
+                'person 7' => 0,
+            ],
+            'type 4' => [
+                'person 1' => 0,
+                'person 2' => 0,
+                'person 3' => 0,
+                'person 4' => 0,
+                'person 5' => 0,
+                'person 6' => 0,
+                'person 7' => 0,
+            ],
+        ];
+
+        foreach ($assignment->getTasks() as $task) {
+            /** @var Task $task */
+            $details[$task->getType()->__toString()][$task->getAssignee()->__toString()]++;
+        }
+
+        foreach ($details as $type => $tasksPerPerson) {
+            $min = min($tasksPerPerson);
+            $max = max($tasksPerPerson);
+        
+            $this->assertLessThanOrEqual(1, $max - $min);
+        }
     }
 }
