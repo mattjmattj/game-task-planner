@@ -61,7 +61,7 @@ class BacktrackableAssignmentTest extends KernelTestCase
     /**
      * @test
      */
-    public function shouldProvideAListOfAvailablePersonsForATaskSlot()
+    public function shouldManageAListOfAvailablePersonsForATaskSlot()
     {
         $planning = $this->makePlanning(3, 6, 4);
         $ba = new BacktrackableAssignment($planning);
@@ -77,5 +77,26 @@ class BacktrackableAssignmentTest extends KernelTestCase
             $planning->getPersons()->get(4),
             $planning->getPersons()->get(5)
         ], $availablePersons);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldKeepTrackOfATaskCountPerPerson()
+    {
+        $planning = $this->makePlanning(3, 6, 4);
+        $ba = new BacktrackableAssignment($planning);
+
+        $ba->setTask(0, $planning->getTaskTypes()->get(0), $planning->getPersons()->get(1));
+        $ba->setTask(0, $planning->getTaskTypes()->get(1), $planning->getPersons()->get(2));
+        $ba->setTask(0, $planning->getTaskTypes()->get(2), $planning->getPersons()->get(3));
+        $ba->setTask(1, $planning->getTaskTypes()->get(2), $planning->getPersons()->get(3));
+
+        $this->assertEquals(0, $ba->getTaskCount($planning->getPersons()->get(0)));
+        $this->assertEquals(1, $ba->getTaskCount($planning->getPersons()->get(1)));
+        $this->assertEquals(1, $ba->getTaskCount($planning->getPersons()->get(2)));
+        $this->assertEquals(2, $ba->getTaskCount($planning->getPersons()->get(3)));
+        $this->assertEquals(0, $ba->getTaskCount($planning->getPersons()->get(4)));
+        $this->assertEquals(0, $ba->getTaskCount($planning->getPersons()->get(5)));
     }
 }

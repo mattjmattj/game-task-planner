@@ -26,6 +26,8 @@ final class BacktrackableAssignment
 
     private array $availablePersons = [];
 
+    private \SplObjectStorage $taskCountPerPerson;
+
     public function __construct(
         private Planning $planning
     )
@@ -39,6 +41,11 @@ final class BacktrackableAssignment
             foreach ($this->planning->getPersons() as $person) {
                 $this->availablePersons[$game][] = $person;
             }
+        }
+
+        $this->taskCountPerPerson = new \SplObjectStorage;
+        foreach ($this->planning->getPersons() as $person) {
+            $this->taskCountPerPerson[$person] = 0;
         }
     }
     
@@ -76,6 +83,8 @@ final class BacktrackableAssignment
             unset($this->availablePersons[$game][$k]);
         }
 
+        $this->taskCountPerPerson[$person] = $this->taskCountPerPerson[$person] + 1;
+
         return $this;
     }
 
@@ -86,6 +95,7 @@ final class BacktrackableAssignment
         $this->availableTaskSlots[] = [$game, $type];
         if ($person !== false) {
             $this->availablePersons[$game][] = $person;
+            $this->taskCountPerPerson[$person] = $this->taskCountPerPerson[$person] - 1;
         }
         return $this;
     }
@@ -106,5 +116,10 @@ final class BacktrackableAssignment
     public function isTaskSlotAvailable(int $game, TaskType $type): bool
     {
         return !$this->taskSlots[$game][$type];
+    }
+
+    public function getTaskCount(Person $person): int
+    {
+        return $this->taskCountPerPerson[$person];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Service\Planner;
 
 use App\Entity\Assignment;
+use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
 use App\Service\AssignmentGenerator;
@@ -14,6 +15,8 @@ final class ConstraintBasedPlanner implements PlannerInterface
 {
     /** @var ConstraintInterface[] */
     private array $constraints = [];
+
+    private int $backtrackingCalls = 0;
 
     public function __construct(
         private AssignmentGenerator $assignmentGenerator
@@ -38,6 +41,7 @@ final class ConstraintBasedPlanner implements PlannerInterface
         if (!$assignment) {
             throw new ImpossiblePlanningException('Impossible to satisfy the given set of constraints');
         }
+        var_dump($this->backtrackingCalls);
         return $assignment;
     }
 
@@ -75,6 +79,7 @@ final class ConstraintBasedPlanner implements PlannerInterface
     private function choosePerson(BacktrackableAssignment $ba, int $game, TaskType $type): iterable
     {
         $persons = $ba->getAvailablePersons($game, $type);
+        usort($persons, fn(Person $a, Person $b) => $ba->getTaskCount($a) <=> $ba->getTaskCount($b));
         foreach ($persons as $person) {
             yield $person;
         }
@@ -82,6 +87,8 @@ final class ConstraintBasedPlanner implements PlannerInterface
 
     private function backtrack(BacktrackableAssignment $ba): ?Assignment
     {
+        $this->backtrackingCalls++;
+
         $assignment = $ba->makeAssignment();
         if ($this->validate($assignment)) {
             return $assignment;
@@ -105,5 +112,10 @@ final class ConstraintBasedPlanner implements PlannerInterface
             $ba->unsetTask($game, $type);
         }
         return null;
+    }
+
+    public function getBacktrackingCall(): int
+    {
+        return $this->backtrackingCalls;
     }
 }
