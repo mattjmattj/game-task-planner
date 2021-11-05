@@ -7,6 +7,7 @@ use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
 use App\Service\Planner\BasicPlanner;
+use App\Service\Planner\Constraint\BacktrackableAssignment;
 use App\Service\Planner\Constraint\NotTooManyTasksConstraint;
 use App\Service\Planner\ImpossiblePlanningException;
 use App\Service\Planner\PlannerInterface;
@@ -77,6 +78,9 @@ abstract class AbstractPlannerTest extends KernelTestCase
     {        
         $assignment = $this->generateTestAssignment($this->getPlanner(), $this->makePlanning());
 
-        $this->assertTrue((new NotTooManyTasksConstraint)->validate($assignment));
+        $this->assertTrue(
+            (new NotTooManyTasksConstraint)
+                ->validate(BacktrackableAssignment::fromAssignment($assignment))
+        );
     }
 }

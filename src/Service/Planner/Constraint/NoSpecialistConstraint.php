@@ -10,7 +10,7 @@ use SplObjectStorage;
  */
 final class NoSpecialistConstraint implements ConstraintInterface
 {
-    public function validate(Assignment $assignment): bool
+    public function validate(BacktrackableAssignment $assignment): bool
     {
         $repartition = new \SplObjectStorage;
         foreach ($assignment->getPlanning()->getTaskTypes() as $type) {
@@ -20,10 +20,14 @@ final class NoSpecialistConstraint implements ConstraintInterface
             }
         }
 
-        foreach ($assignment->getTasks() as $task) {
-            $t = $task->getType();
-            $p = $task->getAssignee();
-            $repartition[$t][$p] = $repartition[$t][$p] + 1;
+        foreach ($assignment->getTaskSlots() as $gameTaskSlots) {
+            foreach ($gameTaskSlots as $type) {
+                $person = $gameTaskSlots[$type];
+                if (!$person) {
+                    continue;
+                }
+                $repartition[$type][$person] = $repartition[$type][$person] + 1;
+            }
         }
 
         foreach ($repartition as $type) {

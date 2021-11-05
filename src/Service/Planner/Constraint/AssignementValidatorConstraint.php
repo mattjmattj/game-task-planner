@@ -2,7 +2,6 @@
 
 namespace App\Service\Planner\Constraint;
 
-use App\Entity\Assignment;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AssignmentValidatorConstraint implements ConstraintInterface
@@ -12,8 +11,8 @@ final class AssignmentValidatorConstraint implements ConstraintInterface
     )
     {}
 
-    public function validate(Assignment $assignment): bool
+    public function validate(BacktrackableAssignment $assignment): bool
     {
-        return $this->validator->validate($assignment)->count() === 0;
+        return $this->validator->validate($assignment->makeAssignment())->count() === 0;
     }
 }

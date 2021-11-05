@@ -10,7 +10,7 @@ use App\Entity\TaskType;
 
 /**
  * Representation of an Assignment that will ease the implementation of better
- * algorithms and heuristics when using backtraking search in ConstraintBasedPlanner
+ * algorithms and heuristics when using backtraking search in BacktrackingPlanner
  * 
  * TODO maybe count some stuff along the way, to improve the performance of some algorithms
  * or maintain the _domain_ of each task slot, for early rejections
@@ -47,6 +47,16 @@ final class BacktrackableAssignment
         foreach ($this->planning->getPersons() as $person) {
             $this->taskCountPerPerson[$person] = 0;
         }
+    }
+
+    public static function fromAssignment(Assignment $assignment): self
+    {
+        $ba = new self($assignment->getPlanning());
+        foreach ($assignment->getTasks() as $task) {
+            /** @var Task $task */
+            $ba->setTask($task->getGame(), $task->getType(), $task->getAssignee());
+        }
+        return $ba;
     }
     
     public function makeAssignment(): Assignment
@@ -121,5 +131,15 @@ final class BacktrackableAssignment
     public function getTaskCount(Person $person): int
     {
         return $this->taskCountPerPerson[$person];
+    }
+
+    public function getPlanning(): Planning
+    {
+        return $this->planning;
+    }
+
+    public function getTaskSlots(): array
+    {
+        return $this->taskSlots;
     }
 }
