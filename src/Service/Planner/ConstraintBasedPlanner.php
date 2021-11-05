@@ -41,7 +41,6 @@ final class ConstraintBasedPlanner implements PlannerInterface
         if (!$assignment) {
             throw new ImpossiblePlanningException('Impossible to satisfy the given set of constraints');
         }
-        var_dump($this->backtrackingCalls);
         return $assignment;
     }
 
