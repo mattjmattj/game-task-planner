@@ -6,7 +6,6 @@ use App\Entity\Assignment;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
-use App\Service\AssignmentGenerator;
 use App\Service\Planner\Constraint\BacktrackableAssignment;
 use App\Service\Planner\Constraint\ConstraintInterface;
 use App\Service\Planner\Constraint\RejectableConstraintInterface;
@@ -17,11 +16,6 @@ final class BacktrackingPlanner implements PlannerInterface
     private array $constraints = [];
 
     private int $backtrackingCalls = 0;
-
-    public function __construct(
-        private AssignmentGenerator $assignmentGenerator
-    )
-    {}
 
     public function setConstraints(array $constraints): self
     {
