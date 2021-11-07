@@ -2,39 +2,21 @@
 
 namespace App\Entity;
 
-use App\Repository\AssignmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AssignmentRepository::class)
- */
+
 #[\App\Validator\Assignment]
 class Assignment
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    private Planning $planning;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Planning::class, inversedBy="assignments")
-     * @ORM\JoinColumn(nullable=false)
+     * @var Collection|Task[]
      */
-    private $planning;
+    private ArrayCollection $tasks;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="assignment", orphanRemoval=true)
-     */
-    private $tasks;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $title;
+    private string $title;
 
     public function __construct()
     {

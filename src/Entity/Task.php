@@ -2,47 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\TaskRepository;
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity(repositoryClass=TaskRepository::class)
- */
 class Task
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    private Person $assignee;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Person::class, inversedBy="tasks")
-     */
-    private $assignee;
+    private TaskType $type;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=TaskType::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $type;
+    private int $game;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Assignment::class, inversedBy="tasks")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $assignment;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $game;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    private Assignment $assignment;
 
     public function getAssignee(): ?Person
     {
