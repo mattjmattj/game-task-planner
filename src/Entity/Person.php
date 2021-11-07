@@ -25,18 +25,12 @@ class Person
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="assignee")
-     */
-    private $tasks;
-
-    /**
      * @ORM\ManyToMany(targetEntity=Planning::class, mappedBy="persons")
      */
     private $plannings;
 
     public function __construct()
     {
-        $this->tasks = new ArrayCollection();
         $this->plannings = new ArrayCollection();
     }
 
@@ -53,36 +47,6 @@ class Person
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Task[]
-     */
-    public function getTasks(): Collection
-    {
-        return $this->tasks;
-    }
-
-    public function addTask(Task $task): self
-    {
-        if (!$this->tasks->contains($task)) {
-            $this->tasks[] = $task;
-            $task->setAssignee($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTask(Task $task): self
-    {
-        if ($this->tasks->removeElement($task)) {
-            // set the owning side to null (unless already changed)
-            if ($task->getAssignee() === $this) {
-                $task->setAssignee(null);
-            }
-        }
 
         return $this;
     }
