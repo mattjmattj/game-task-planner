@@ -40,7 +40,7 @@ class Planning
     private $gameCount;
 
     /**
-     * @ORM\OneToMany(targetEntity=UnavailablePerson::class, mappedBy="planning", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=UnavailablePerson::class, mappedBy="planning", orphanRemoval=true, cascade={"persist"})
      */
     private $unavailablePeople;
 

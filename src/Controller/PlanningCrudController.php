@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Backtracking\Constraint\AssignmentValidatorConstraint;
 use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
+use App\Backtracking\Constraint\UnavailablePersonConstraint;
 use App\Entity\Planning;
+use App\Entity\UnavailablePerson;
+use App\Form\UnavailablePersonType;
 use App\Service\Planner\BacktrackingPlanner;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -14,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -38,12 +42,26 @@ class PlanningCrudController extends AbstractCrudController
     
     public function configureFields(string $pageName): iterable
     {
+        /** @var Planning */
+        $planning = $this->getContext()->getEntity()->getInstance();
+
         return [
             IdField::new('id')->onlyOnIndex(),
             TextField::new('title', 'Title'),
             AssociationField::new('taskTypes', 'Task types'),
             AssociationField::new('persons', 'Persons'),
             IntegerField::new('gameCount', 'Number of games'),
+            FormField::addPanel(),
+            CollectionField::new('unavailablePeople', 'Unavailable people')
+                ->setEntryIsComplex(true)
+                ->setEntryType(UnavailablePersonType::class)
+                ->setFormTypeOptions([
+                    'entry_options' => [
+                        'planning' => $planning,
+                    ],
+                ])
+                ->onlyOnForms()
+                ->onlyWhenUpdating(),
         ];
     }
     
@@ -66,7 +84,20 @@ class PlanningCrudController extends AbstractCrudController
 
     public function makeAssignment(AdminContext $context)
     {
+        /** @var Planning */
         $planning = $context->getEntity()->getInstance();
+
+        foreach ($planning->getUnavailablePeople() as $unavailablePerson) {
+            /** @var UnavailablePerson $unavailablePerson */
+
+            $this->planner->addConstraint(
+                new UnavailablePersonConstraint(
+                    $unavailablePerson->getPerson(),
+                    $unavailablePerson->getGame()
+                )
+            );
+        }
+
         $assignment = $this->planner->makeAssignment($planning);
 
         return $this->render(
