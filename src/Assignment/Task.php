@@ -1,6 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Assignment;
+
+use App\Entity\Person;
+use App\Entity\TaskType;
 
 class Task
 {

@@ -3,8 +3,6 @@
 namespace App\Backtracking\Constraint;
 
 use App\Backtracking\BacktrackableAssignment;
-use App\Entity\Assignment;
-use SplObjectStorage;
 
 /**
  * Constraint preventing someone from being given the same task type more than anyone else

@@ -2,7 +2,7 @@
 
 namespace App\Service\Planner;
 
-use App\Entity\Assignment;
+use App\Assignment\Assignment;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;

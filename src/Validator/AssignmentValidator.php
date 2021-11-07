@@ -2,8 +2,8 @@
 
 namespace App\Validator;
 
-use App\Entity\Assignment as AssignmentEntity;
-use App\Entity\Task;
+use App\Assignment\Assignment as AssignmentEntity;
+use App\Assignment\Task;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 

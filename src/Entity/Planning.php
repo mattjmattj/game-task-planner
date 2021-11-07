@@ -40,15 +40,16 @@ class Planning
     private $gameCount;
 
     /**
-     * @ORM\OneToMany(targetEntity=Assignment::class, mappedBy="planning", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=UnavailablePerson::class, mappedBy="planning", orphanRemoval=true)
      */
-    private $assignments;
+    private $unavailablePeople;
 
     public function __construct()
     {
         $this->taskTypes = new ArrayCollection();
         $this->persons = new ArrayCollection();
         $this->assignments = new ArrayCollection();
+        $this->unavailablePeople = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,29 +136,29 @@ class Planning
     }
 
     /**
-     * @return Collection|Assignment[]
+     * @return Collection|UnavailablePerson[]
      */
-    public function getAssignments(): Collection
+    public function getUnavailablePeople(): Collection
     {
-        return $this->assignments;
+        return $this->unavailablePeople;
     }
 
-    public function addAssignment(Assignment $assignment): self
+    public function addUnavailablePerson(UnavailablePerson $unavailablePerson): self
     {
-        if (!$this->assignments->contains($assignment)) {
-            $this->assignments[] = $assignment;
-            $assignment->setPlanning($this);
+        if (!$this->unavailablePeople->contains($unavailablePerson)) {
+            $this->unavailablePeople[] = $unavailablePerson;
+            $unavailablePerson->setPlanning($this);
         }
 
         return $this;
     }
 
-    public function removeAssignment(Assignment $assignment): self
+    public function removeUnavailablePerson(UnavailablePerson $unavailablePerson): self
     {
-        if ($this->assignments->removeElement($assignment)) {
+        if ($this->unavailablePeople->removeElement($unavailablePerson)) {
             // set the owning side to null (unless already changed)
-            if ($assignment->getPlanning() === $this) {
-                $assignment->setPlanning(null);
+            if ($unavailablePerson->getPlanning() === $this) {
+                $unavailablePerson->setPlanning(null);
             }
         }
 

@@ -2,14 +2,13 @@
 
 namespace App\Tests\Validator;
 
-use App\Entity\Assignment;
+use App\Assignment\Assignment;
+use App\Assignment\Task;
 use App\Entity\Person;
 use App\Entity\Planning;
-use App\Entity\Task;
 use App\Entity\TaskType;
 use App\Validator\Assignment as AssignmentConstraint;
 use App\Validator\AssignmentValidator as AssignmentValidator;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 final class AssignmentTest extends ConstraintValidatorTestCase

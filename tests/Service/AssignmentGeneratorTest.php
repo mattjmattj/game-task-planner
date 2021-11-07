@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service;
 
-use App\Entity\Assignment;
+use App\Assignment\Assignment;
 use App\Service\AssignmentGenerator;
 use App\Tests\Service\Planner\PlannerTestTrait;
 use App\Validator\Assignment as AssignmentConstraint;

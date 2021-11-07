@@ -2,10 +2,10 @@
 
 namespace App\Backtracking;
 
-use App\Entity\Assignment;
+use App\Assignment\Assignment;
+use App\Assignment\Task;
 use App\Entity\Person;
 use App\Entity\Planning;
-use App\Entity\Task;
 use App\Entity\TaskType;
 
 /**

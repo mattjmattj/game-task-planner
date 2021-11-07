@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Assignment;
 
+use App\Entity\Planning;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 

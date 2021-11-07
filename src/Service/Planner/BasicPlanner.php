@@ -2,7 +2,7 @@
 
 namespace App\Service\Planner;
 
-use App\Entity\Assignment;
+use App\Assignment\Assignment;
 use App\Entity\Planning;
 use App\Backtracking\Constraint\AssignmentValidatorConstraint;
 use App\Backtracking\Constraint\NoSpecialistConstraint;

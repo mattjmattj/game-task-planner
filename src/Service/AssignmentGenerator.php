@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
-use App\Entity\Assignment;
+use App\Assignment\Assignment;
+use App\Assignment\Task;
 use App\Entity\Planning;
-use App\Entity\Task;
 use App\Service\Math\CombinationGenerator;
 
 final class AssignmentGenerator
