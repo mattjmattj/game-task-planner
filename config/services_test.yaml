@@ -1,10 +1,24 @@
 services:
     _defaults:
         public: true
+        autowire: true
+        autoconfigure: true
 
-    App\Service\Planner\PlannerInterface:
-        alias: 'App\Service\Planner\BasicPlanner'
-    
-    App\Service\AssignmentGenerator:
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+            - '../src/Backtracking/'
+
+
+    App\Service\Planner\BasicPlanner:
+        shared: false
         arguments:
-            $combinationGenerator: '@App\Service\Math\CombinationGenerator'
+            $planner: '@App\Service\Planner\BacktrackingPlanner'
+            $validator: '@validator'
+    
+    App\Service\Planner\BacktrackingPlanner:
+        shared: false

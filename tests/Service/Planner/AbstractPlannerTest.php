@@ -2,13 +2,11 @@
 
 namespace App\Tests\Service\Planner;
 
-use App\Entity\Assignment;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
-use App\Service\Planner\BasicPlanner;
-use App\Service\Planner\Constraint\BacktrackableAssignment;
-use App\Service\Planner\Constraint\NotTooManyTasksConstraint;
+use App\Backtracking\BacktrackableAssignment;
+use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Service\Planner\ImpossiblePlanningException;
 use App\Service\Planner\PlannerInterface;
 use App\Validator\Assignment as AssignmentConstraint;

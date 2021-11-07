@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Service\Planner\Constraint;
+namespace App\Backtracking\Constraint;
+
+use App\Backtracking\BacktrackableAssignment;
 
 final class NotTooManyTasksConstraint implements ConstraintInterface
 {

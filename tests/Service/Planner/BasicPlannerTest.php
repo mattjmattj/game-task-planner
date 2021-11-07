@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Planner;
 
+use App\Service\Planner\BacktrackingPlanner;
 use App\Service\Planner\BasicPlanner;
 use App\Service\Planner\PlannerInterface;
 
@@ -14,7 +15,10 @@ class BasicPlannerTest extends AbstractPlannerTest
 
     public function setUp(): void
     {
-        $this->planner =new BasicPlanner;
+        $this->planner = new BasicPlanner(
+            self::getContainer()->get(BacktrackingPlanner::class),
+            self::getContainer()->get('validator')
+        );
     }
 
     public function getPlanner(): PlannerInterface

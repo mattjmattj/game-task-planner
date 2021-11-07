@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Service\Planner\Constraint;
+namespace App\Backtracking\Constraint;
 
+use App\Backtracking\BacktrackableAssignment;
 use App\Entity\Assignment;
 use SplObjectStorage;
 

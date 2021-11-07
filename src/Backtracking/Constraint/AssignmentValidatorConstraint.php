@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Service\Planner\Constraint;
+namespace App\Backtracking\Constraint;
 
+use App\Backtracking\BacktrackableAssignment;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AssignmentValidatorConstraint implements ConstraintInterface

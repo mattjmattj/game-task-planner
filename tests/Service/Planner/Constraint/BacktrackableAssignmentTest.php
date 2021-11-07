@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service\Planner\Constraint;
 
-use App\Service\Planner\Constraint\BacktrackableAssignment;
+use App\Backtracking\BacktrackableAssignment;
 use App\Tests\Service\Planner\PlannerTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

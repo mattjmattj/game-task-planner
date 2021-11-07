@@ -6,9 +6,9 @@ use App\Entity\Assignment;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
-use App\Service\Planner\Constraint\BacktrackableAssignment;
-use App\Service\Planner\Constraint\ConstraintInterface;
-use App\Service\Planner\Constraint\RejectableConstraintInterface;
+use App\Backtracking\BacktrackableAssignment;
+use App\Backtracking\Constraint\ConstraintInterface;
+use App\Backtracking\Constraint\RejectableConstraintInterface;
 
 final class BacktrackingPlanner implements PlannerInterface
 {

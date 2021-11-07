@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Planner\Constraint;
+namespace App\Backtracking;
 
 use App\Entity\Assignment;
 use App\Entity\Person;
