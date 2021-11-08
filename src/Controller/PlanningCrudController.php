@@ -98,6 +98,7 @@ class PlanningCrudController extends AbstractCrudController
             );
         }
 
+        $this->planner->setMaxBacktracking(100000);
         $assignment = $this->planner->makeAssignment($planning);
 
         return $this->render(

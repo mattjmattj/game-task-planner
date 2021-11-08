@@ -17,6 +17,8 @@ final class BacktrackingPlanner implements PlannerInterface
 
     private int $backtrackingCalls = 0;
 
+    private int $maxBacktracking = 0;
+
     public function setConstraints(array $constraints): self
     {
         $this->constraints = $constraints;
@@ -26,6 +28,17 @@ final class BacktrackingPlanner implements PlannerInterface
     public function addConstraint(ConstraintInterface $constraint): self
     {
         $this->constraints[] = $constraint;
+        return $this;
+    }
+
+    public function getMaxBacktracking(): int
+    {
+        return $this->maxBacktracking;
+    }
+
+    public function setMaxBacktracking(int $maxBacktracking): self
+    {
+        $this->maxBacktracking = $maxBacktracking;
         return $this;
     }
 
@@ -81,6 +94,10 @@ final class BacktrackingPlanner implements PlannerInterface
     private function backtrack(BacktrackableAssignment $ba): ?Assignment
     {
         $this->backtrackingCalls++;
+
+        if ($this->maxBacktracking > 0 && $this->backtrackingCalls > $this->maxBacktracking) {
+            throw new MaximumBacktrackingException('Maximum backtracking of ' . $this->maxBacktracking . 'reached');
+        }
 
         if ($this->validate($ba)) {
             return $ba->makeAssignment();

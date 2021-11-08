@@ -10,6 +10,7 @@ use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\BacktrackableAssignment;
 use App\Service\Planner\BacktrackingPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
+use App\Service\Planner\MaximumBacktrackingException;
 use App\Service\Planner\PlannerInterface;
 
 /**
@@ -168,5 +169,16 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         
             $this->assertLessThanOrEqual(1, $max - $min);
         }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowWhenMaximumBacktrackingIsReached()
+    {
+        $this->expectException(MaximumBacktrackingException::class);
+        $this->planner->setMaxBacktracking(10);
+
+        $this->planner->makeAssignment($this->makePlanning());
     }
 }
