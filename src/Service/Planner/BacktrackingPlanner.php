@@ -96,7 +96,7 @@ final class BacktrackingPlanner implements PlannerInterface
         $this->backtrackingCalls++;
 
         if ($this->maxBacktracking > 0 && $this->backtrackingCalls > $this->maxBacktracking) {
-            throw new MaximumBacktrackingException('Maximum backtracking of ' . $this->maxBacktracking . 'reached');
+            throw new MaximumBacktrackingException('Maximum backtracking of ' . $this->maxBacktracking . ' reached');
         }
 
         if ($this->validate($ba)) {

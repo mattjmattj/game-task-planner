@@ -11,37 +11,37 @@ final class NoSpecialistConstraint implements ConstraintInterface
 {
     public function validate(BacktrackableAssignment $assignment): bool
     {
-        $repartition = new \SplObjectStorage;
-        foreach ($assignment->getPlanning()->getTaskTypes() as $type) {
-            $repartition[$type] = new \SplObjectStorage;
-            foreach ($assignment->getPlanning()->getPersons() as $person) {
-                $repartition[$type][$person] = 0;
-            }
-        }
+        $taskTypes = $assignment->getTaskSlotsPerType();
 
-        foreach ($assignment->getTaskSlots() as $gameTaskSlots) {
-            foreach ($gameTaskSlots as $type) {
-                $person = $gameTaskSlots[$type];
-                if (!$person) {
+        foreach ($taskTypes as $type) {
+            $counts = new \SplObjectStorage;
+            foreach ($taskTypes[$type] as $person) {
+                if (false === $person) {
                     continue;
                 }
-                $repartition[$type][$person] = $repartition[$type][$person] + 1;
+                $counts[$person] = $counts->contains($person)
+                    ? $counts[$person] + 1
+                    : 1;
             }
-        }
 
-        foreach ($repartition as $type) {
             $min = PHP_INT_MAX;
             $max = 0;
-            foreach ($repartition[$type] as $person) {
-                $n = $repartition[$type][$person];
+            foreach ($counts as $person) {
+                $n = $counts[$person];
                 if ($n < $min) {
                     $min = $n;
                 }
-                if ($n > $min) {
+                if ($n > $max) {
                     $max = $n;
                 }
             }
-            if ($max - $min > 1) {
+
+            if ($counts->count() !== $assignment->getPlanning()->getPersons()->count()) {
+                // some people are missing : min = 0
+                $min = 0;
+            }
+
+            if ($max - $min > 1 ) {
                 return false;
             }
         }

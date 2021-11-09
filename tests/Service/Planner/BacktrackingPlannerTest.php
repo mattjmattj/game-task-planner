@@ -8,6 +8,7 @@ use App\Backtracking\Constraint\AssignmentValidatorConstraint;
 use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\BacktrackableAssignment;
+use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Service\Planner\BacktrackingPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
 use App\Service\Planner\MaximumBacktrackingException;
@@ -34,6 +35,9 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
 
         // + no specialist
         $this->planner->addConstraint(new NoSpecialistConstraint);
+        $this->planner->addConstraint(new NotTwiceTheSameTaskConstraint);
+
+        $this->planner->setMaxBacktracking(100000);
     }
 
     public function getPlanner(): PlannerInterface
@@ -84,6 +88,7 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         $this->assertTrue($dummy2->validate($ba));
 
         // P(7, 4)^6 ~= 3.5e17
+        // $this->markTestSkipped();
         $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 7, 4));
 
         $ba = BacktrackableAssignment::fromAssignment($assignment);
