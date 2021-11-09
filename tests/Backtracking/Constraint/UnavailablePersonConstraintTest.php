@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Planner\Constraint;
+namespace App\Tests\Service\Backtracking\Constraint;
 
 use App\Backtracking\Constraint\AssignmentValidatorConstraint;
 use App\Backtracking\Constraint\NoSpecialistConstraint;
