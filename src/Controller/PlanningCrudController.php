@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Backtracking\Constraint\AssignmentValidatorConstraint;
 use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
+use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Backtracking\Constraint\UnavailablePersonConstraint;
 use App\Entity\Planning;
 use App\Entity\UnavailablePerson;
@@ -33,6 +34,7 @@ class PlanningCrudController extends AbstractCrudController
         $this->planner->addConstraint(new AssignmentValidatorConstraint($validator));
         $this->planner->addConstraint(new NotTooManyTasksConstraint);
         $this->planner->addConstraint(new NoSpecialistConstraint);
+        $this->planner->addConstraint(new NotTwiceTheSameTaskConstraint);
     }
 
     public static function getEntityFqcn(): string
@@ -100,6 +102,7 @@ class PlanningCrudController extends AbstractCrudController
 
         $this->planner->setMaxBacktracking(100000);
         $assignment = $this->planner->makeAssignment($planning);
+        dump($this->planner->getBacktrackingCalls());
 
         return $this->render(
             'admin/assignment.html.twig',
