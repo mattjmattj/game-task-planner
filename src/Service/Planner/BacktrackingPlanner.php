@@ -9,6 +9,8 @@ use App\Entity\TaskType;
 use App\Backtracking\BacktrackableAssignment;
 use App\Backtracking\Constraint\ConstraintInterface;
 use App\Backtracking\Constraint\RejectableConstraintInterface;
+use App\Backtracking\Heuristic\LesserTasksPersonChooserHeuristic;
+use App\Backtracking\Heuristic\PersonChooserHeuristicInterface;
 
 final class BacktrackingPlanner implements PlannerInterface
 {
@@ -18,6 +20,13 @@ final class BacktrackingPlanner implements PlannerInterface
     private int $backtrackingCalls = 0;
 
     private int $maxBacktracking = 0;
+
+    private PersonChooserHeuristicInterface $personChooserHeuristic;
+
+    public function __construct()
+    {
+        $this->personChooserHeuristic = new LesserTasksPersonChooserHeuristic;
+    }
 
     public function setConstraints(array $constraints): self
     {
@@ -39,6 +48,12 @@ final class BacktrackingPlanner implements PlannerInterface
     public function setMaxBacktracking(int $maxBacktracking): self
     {
         $this->maxBacktracking = $maxBacktracking;
+        return $this;
+    }
+
+    public function setPersonChooserHeuristic(PersonChooserHeuristicInterface $personChooserHeuristic): self
+    {
+        $this->personChooserHeuristic = $personChooserHeuristic;
         return $this;
     }
 
@@ -84,11 +99,8 @@ final class BacktrackingPlanner implements PlannerInterface
 
     private function choosePerson(BacktrackableAssignment $ba, int $game, TaskType $type): iterable
     {
-        $persons = $ba->getAvailablePersons($game, $type);
-        usort($persons, fn(Person $a, Person $b) => $ba->getTaskCount($a) <=> $ba->getTaskCount($b));
-        foreach ($persons as $person) {
-            yield $person;
-        }
+        $heuristic = $this->personChooserHeuristic;
+        yield from $heuristic($ba, $game, $type);
     }
 
     private function backtrack(BacktrackableAssignment $ba): ?Assignment
