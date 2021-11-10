@@ -17,10 +17,10 @@ trait PlannerTestTrait
         $planning->setTitle('Test planning');
         $planning->setGameCount($nbGames);
         for ($i = 1 ; $i <= $nbTaskTypes ; ++$i) {
-            $planning->addTaskType((new TaskType)->setName("type $i"));
+            $planning->addTaskType((new TaskType)->setName("T$i"));
         }
         for ($i = 1 ; $i <= $nbPersons ; ++$i) {
-            $planning->addPerson((new Person)->setName("person $i"));
+            $planning->addPerson((new Person)->setName("P$i"));
         }
 
         return $planning;

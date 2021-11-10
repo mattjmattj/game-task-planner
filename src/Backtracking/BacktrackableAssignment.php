@@ -185,4 +185,9 @@ final class BacktrackableAssignment
     {
         return $this->taskSlotsPerType;
     }
+
+    public function getTaskSlotsByType(TaskType $taskType): array
+    {
+        return $this->taskSlotsPerType[$taskType];
+    }
 }

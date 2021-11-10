@@ -9,6 +9,8 @@ use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\BacktrackableAssignment;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
+use App\Backtracking\Constraint\RejectableConstraintInterface;
+use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
 use App\Service\Planner\BacktrackingPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
 use App\Service\Planner\MaximumBacktrackingException;
@@ -38,6 +40,8 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         $this->planner->addConstraint(new NotTwiceTheSameTaskConstraint);
 
         $this->planner->setMaxBacktracking(100000);
+
+        $this->planner->setPersonChooserHeuristic(new NoSpecialistPersonChooserHeuristic);
     }
 
     public function getPlanner(): PlannerInterface
@@ -51,22 +55,38 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
     public function shouldProvideAnAssignmentValidatingASetOfConstraints()
     {   
         // dummy constraint that wants person 1 to do task type 2 on game 0
-        $dummy1 = new class() implements ConstraintInterface {
-            public function validate(BacktrackableAssignment $assignment): bool
+        $dummy1 = new class() implements RejectableConstraintInterface {
+            public function reject(BacktrackableAssignment $assignment): bool
             {
                 $taskSlots = $assignment->getTaskSlots();
                 $planning = $assignment->getPlanning();
-                return $taskSlots[0][$planning->getTaskTypes()->get(1)] === $planning->getPersons()->get(0);
+                $value = $taskSlots[0][$planning->getTaskTypes()->get(1)];
+                return 
+                    $value !== false
+                    && $value !== $planning->getPersons()->get(0);
+            }
+
+            public function validate(BacktrackableAssignment $assignment): bool
+            {
+                return !$this->reject($assignment);
             }
         };
 
         // dummy constraint that wants person 2 to do task type 1 on game 1
-        $dummy2 = new class() implements ConstraintInterface {
-            public function validate(BacktrackableAssignment $assignment): bool
+        $dummy2 = new class() implements RejectableConstraintInterface {
+            public function reject(BacktrackableAssignment $assignment): bool
             {
                 $taskSlots = $assignment->getTaskSlots();
                 $planning = $assignment->getPlanning();
-                return $taskSlots[1][$planning->getTaskTypes()->get(0)] === $planning->getPersons()->get(1);
+                $value = $taskSlots[1][$planning->getTaskTypes()->get(0)];
+                return 
+                    $value !== false
+                    && $value !== $planning->getPersons()->get(1);
+            }
+
+            public function validate(BacktrackableAssignment $assignment): bool
+            {
+                return !$this->reject($assignment);
             }
         };
 
@@ -82,13 +102,12 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
 
         // P(5, 2)^6 = 46,656,000,000
         $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 5, 2));
-
+        
         $ba = BacktrackableAssignment::fromAssignment($assignment);
         $this->assertTrue($dummy1->validate($ba));
         $this->assertTrue($dummy2->validate($ba));
 
         // P(7, 4)^6 ~= 3.5e17
-        // $this->markTestSkipped();
         $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 7, 4));
 
         $ba = BacktrackableAssignment::fromAssignment($assignment);
@@ -125,41 +144,41 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 7, 4));
 
         $details = [
-            'type 1' => [
-                'person 1' => 0,
-                'person 2' => 0,
-                'person 3' => 0,
-                'person 4' => 0,
-                'person 5' => 0,
-                'person 6' => 0,
-                'person 7' => 0,
+            'T1' => [
+                'P1' => 0,
+                'P2' => 0,
+                'P3' => 0,
+                'P4' => 0,
+                'P5' => 0,
+                'P6' => 0,
+                'P7' => 0,
             ],
-            'type 2' => [
-                'person 1' => 0,
-                'person 2' => 0,
-                'person 3' => 0,
-                'person 4' => 0,
-                'person 5' => 0,
-                'person 6' => 0,
-                'person 7' => 0,
+            'T2' => [
+                'P1' => 0,
+                'P2' => 0,
+                'P3' => 0,
+                'P4' => 0,
+                'P5' => 0,
+                'P6' => 0,
+                'P7' => 0,
             ],
-            'type 3' => [
-                'person 1' => 0,
-                'person 2' => 0,
-                'person 3' => 0,
-                'person 4' => 0,
-                'person 5' => 0,
-                'person 6' => 0,
-                'person 7' => 0,
+            'T3' => [
+                'P1' => 0,
+                'P2' => 0,
+                'P3' => 0,
+                'P4' => 0,
+                'P5' => 0,
+                'P6' => 0,
+                'P7' => 0,
             ],
-            'type 4' => [
-                'person 1' => 0,
-                'person 2' => 0,
-                'person 3' => 0,
-                'person 4' => 0,
-                'person 5' => 0,
-                'person 6' => 0,
-                'person 7' => 0,
+            'T4' => [
+                'P1' => 0,
+                'P2' => 0,
+                'P3' => 0,
+                'P4' => 0,
+                'P5' => 0,
+                'P6' => 0,
+                'P7' => 0,
             ],
         ];
 
