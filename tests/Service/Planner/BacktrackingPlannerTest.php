@@ -216,8 +216,32 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         // P(6,8)^6 = 6,7×10²⁵
         $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 8, 6));
         $this->assertInstanceOf(Assignment::class, $assignment);
-        echo PHP_EOL;
-        echo $this->planner->getBacktrackingCalls() . " backtracks\n";
-        $assignment->debugPrint();
+        // echo PHP_EOL;
+        // echo $this->planner->getBacktrackingCalls() . " backtracks\n";
+        // $assignment->debugPrint();
+    }
+
+    /**
+     * @test
+     * using a BacktrackingPlanner as a generator
+     */
+    public function shouldMakeMultipleAssignements()
+    {
+        $planning = $this->makePlanning(6, 7, 4);
+        $count = 10;
+        $assignments = [];
+        foreach ($this->planner->makeAssignments($planning) as $assignment) {
+            if (--$count === 0) {
+                break;
+            }
+            // echo PHP_EOL;
+            // echo $this->planner->getBacktrackingCalls() . " backtracks\n";
+            // $assignment->debugPrint();
+
+            foreach($assignments as $old) {
+                $this->assertFalse($old->equals($assignment));
+            }
+            $assignments[] = $assignment;
+        }
     }
 }

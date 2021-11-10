@@ -59,11 +59,15 @@ final class BacktrackingPlanner implements PlannerInterface
 
     public function makeAssignment(Planning $planning): Assignment
     {
-        $assignment = $this->backtrack(new BacktrackableAssignment($planning));
-        if (!$assignment) {
-            throw new ImpossiblePlanningException('Impossible to satisfy the given set of constraints');
+        foreach ($this->backtrack(new BacktrackableAssignment($planning)) as $assignment) {
+            return $assignment;
         }
-        return $assignment;
+        throw new ImpossiblePlanningException('Impossible to satisfy the given set of constraints');
+    }
+
+    public function makeAssignments(Planning $planning): iterable
+    {
+        yield from $this->backtrack(new BacktrackableAssignment($planning));
     }
 
     private function validate(BacktrackableAssignment $assignment): bool
@@ -103,7 +107,7 @@ final class BacktrackingPlanner implements PlannerInterface
         yield from $heuristic($ba, $game, $type);
     }
 
-    private function backtrack(BacktrackableAssignment $ba): ?Assignment
+    private function backtrack(BacktrackableAssignment $ba): iterable
     {
         $this->backtrackingCalls++;
 
@@ -112,27 +116,22 @@ final class BacktrackingPlanner implements PlannerInterface
         }
 
         if ($this->validate($ba)) {
-            return $ba->makeAssignment();
-        }
-
-        if ($this->reject($ba)) {
-            return null;
+            yield $ba->makeAssignment();
+            return;
+        } elseif ($this->reject($ba)) {
+            return;
         }
 
         try {
             [$game, $type] = $this->pickTaskSlot($ba);
         } catch (\Throwable) {
-            return null;
+            return;
         }
         foreach ($this->choosePerson($ba, $game, $type) as $person) {
             $ba->setTask($game, $type, $person);
-            $assignment = $this->backtrack($ba);
-            if ($assignment) {
-                return $assignment;
-            }
+            yield from $this->backtrack($ba);
             $ba->unsetTask($game, $type);
         }
-        return null;
     }
 
     public function getBacktrackingCalls(): int
