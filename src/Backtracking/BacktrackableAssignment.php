@@ -190,4 +190,11 @@ final class BacktrackableAssignment
     {
         return $this->taskSlotsPerType[$taskType];
     }
+
+    public function equals(BacktrackableAssignment $ba): bool
+    {
+        return 
+            $this->planning === $ba->planning
+            && $this->taskSlots == $ba->taskSlots;
+    }
 }
