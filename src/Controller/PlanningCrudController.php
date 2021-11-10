@@ -7,6 +7,7 @@ use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Backtracking\Constraint\UnavailablePersonConstraint;
+use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
 use App\Entity\Planning;
 use App\Entity\UnavailablePerson;
 use App\Form\UnavailablePersonType;
@@ -35,6 +36,8 @@ class PlanningCrudController extends AbstractCrudController
         $this->planner->addConstraint(new NotTooManyTasksConstraint);
         $this->planner->addConstraint(new NoSpecialistConstraint);
         $this->planner->addConstraint(new NotTwiceTheSameTaskConstraint);
+
+        $this->planner->setPersonChooserHeuristic(new NoSpecialistPersonChooserHeuristic);
     }
 
     public static function getEntityFqcn(): string
