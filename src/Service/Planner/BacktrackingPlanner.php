@@ -118,8 +118,6 @@ final class BacktrackingPlanner implements PlannerInterface
         if ($this->validate($ba)) {
             yield $ba->makeAssignment();
             return;
-        } elseif ($this->reject($ba)) {
-            return;
         }
 
         try {
@@ -129,7 +127,9 @@ final class BacktrackingPlanner implements PlannerInterface
         }
         foreach ($this->choosePerson($ba, $game, $type) as $person) {
             $ba->setTask($game, $type, $person);
-            yield from $this->backtrack($ba);
+            if (!$this->reject($ba)) {
+                yield from $this->backtrack($ba);
+            }
             $ba->unsetTask($game, $type);
         }
     }
