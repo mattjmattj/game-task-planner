@@ -96,8 +96,17 @@ class Assignment
 
     public function debugPrint()
     {
-        foreach ($this->getTasks() as $task) {
-            printf("game #%d : %s -> %s\n", $task->getGame(), $task->getType(), $task->getAssignee());
+        echo "\t";
+        foreach ($this->getPlanning()->getTaskTypes() as $type) {
+            echo $type->getName() . "\t";
+        }
+        echo PHP_EOL;
+        foreach ($this->getTasksGroupedByGame() as $game => $tasks) {
+            echo "$game\t";
+            foreach ($tasks as $task) {
+                echo $task->getAssignee()->getName() . "\t";
+            }
+            echo PHP_EOL;
         }
     }
 
