@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Planner;
 
+use App\Assignment\Assignment;
 use App\Entity\Task;
 use App\Backtracking\Constraint\ConstraintInterface;
 use App\Backtracking\Constraint\AssignmentValidatorConstraint;
@@ -10,6 +11,7 @@ use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\BacktrackableAssignment;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Backtracking\Constraint\RejectableConstraintInterface;
+use App\Backtracking\Heuristic\LesserTasksPersonChooserHeuristic;
 use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
 use App\Service\Planner\BacktrackingPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
@@ -204,5 +206,18 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         $this->planner->setMaxBacktracking(10);
 
         $this->planner->makeAssignment($this->makePlanning());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeAssignmentsForBigProblems()
+    {
+        // P(6,8)^6 = 6,7×10²⁵
+        $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 8, 6));
+        $this->assertInstanceOf(Assignment::class, $assignment);
+        echo PHP_EOL;
+        echo $this->planner->getBacktrackingCalls() . " backtracks\n";
+        $assignment->debugPrint();
     }
 }
