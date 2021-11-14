@@ -37,15 +37,20 @@ final class BacktrackableAssignment
     private array $availableTaskSlots = [];
 
     /**
-     * the list of possible assignee / game
-     * not yet the domain of each variable, but the domain of each row
-     */
-    private array $availablePersons = [];
-
-    /**
      * how many tasks each person have assigned to them
      */
     private \SplObjectStorage $taskCountPerPerson;
+
+    /**
+     * stack of Domain, defining the domain of each taskSlot.
+     * we use a stack in order to easily go back to a previous state
+     */
+    private \SplStack $domainStack;
+
+    /**
+     * @see unsetLastTask
+     */
+    private \SplStack $lastTaskSlotStack;
 
     public function __construct(
         private Planning $planning
@@ -67,15 +72,17 @@ final class BacktrackableAssignment
                 $a[$game] = false;
                 $this->taskSlotsPerType[$type] = $a;
             }
-            foreach ($this->planning->getPersons() as $person) {
-                $this->availablePersons[$game][] = $person;
-            }
         }
 
         $this->taskCountPerPerson = new \SplObjectStorage;
         foreach ($this->planning->getPersons() as $person) {
             $this->taskCountPerPerson[$person] = 0;
         }
+
+        $this->domainStack = new \SplStack;
+        $this->domainStack->push(new Domain($this->planning));
+
+        $this->lastTaskSlotStack = new \SplStack;
     }
 
     public static function fromAssignment(Assignment $assignment): self
@@ -121,18 +128,41 @@ final class BacktrackableAssignment
             unset($this->availableTaskSlots[$k]);
         }
 
-        $k = array_search($person, $this->availablePersons[$game]);
-        if (false !== $k) {
-            unset($this->availablePersons[$game][$k]);
-        }
+        $domain = $this->domainStack->top();
+
+        $newDomain = Domain::createCopy($domain);
+        $newDomain->setDomain($game, $type, [$person]);
+        $this->domainStack->push($newDomain);
 
         $this->taskCountPerPerson[$person] = $this->taskCountPerPerson[$person] + 1;
+
+        $this->lastTaskSlotStack->push([$game, $type]);
 
         return $this;
     }
 
-    public function unsetTask(int $game, TaskType $type): self
+    /**
+     * Reduces the current domain with a given list of reducers
+     */
+    public function applyDomainReducers(iterable $domainReducers)
     {
+        $domain = $this->domainStack->top();
+        do {
+            $changed = false;
+            foreach($domainReducers as $reducer) {
+                $changed |= $reducer($domain);
+            }
+        } while ($changed);
+    }
+
+    public function unsetLastTask(): self
+    {
+        if ($this->lastTaskSlotStack->isEmpty()) {
+            return $this;
+        }
+
+        [$game, $type] = $this->lastTaskSlotStack->pop();
+
         $person = $this->taskSlots[$game][$type];
         $this->taskSlots[$game][$type] = false;
 
@@ -142,18 +172,20 @@ final class BacktrackableAssignment
 
         $this->availableTaskSlots[] = [$game, $type];
         if ($person !== false) {
-            $this->availablePersons[$game][] = $person;
             $this->taskCountPerPerson[$person] = $this->taskCountPerPerson[$person] - 1;
         }
+
+        $this->domainStack->pop();
+
         return $this;
     }
 
 
     public function getAvailablePersons(int $game, TaskType $type): array
     {
-        // we will return the persons not already assigned to a task for this game
-        // TODO keep track of the domain of each slot (game x type) along the way
-        return array_values($this->availablePersons[$game]);
+        /** @var Domain */
+        $domain = $this->domainStack->top();
+        return $domain->getDomain($game, $type);
     }
 
     public function getAvailableTaskSlots(): array
