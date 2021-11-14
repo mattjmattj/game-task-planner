@@ -9,6 +9,7 @@ use App\Entity\TaskType;
 use App\Backtracking\BacktrackableAssignment;
 use App\Backtracking\Constraint\ConstraintInterface;
 use App\Backtracking\Constraint\RejectableConstraintInterface;
+use App\Backtracking\DomainReducer\DomainReducerInterface;
 use App\Backtracking\Heuristic\LesserTasksPersonChooserHeuristic;
 use App\Backtracking\Heuristic\PersonChooserHeuristicInterface;
 
@@ -22,6 +23,8 @@ final class BacktrackingPlanner implements PlannerInterface
     private int $maxBacktracking = 0;
 
     private PersonChooserHeuristicInterface $personChooserHeuristic;
+
+    private array $domainReducers = [];
 
     public function __construct()
     {
@@ -37,6 +40,18 @@ final class BacktrackingPlanner implements PlannerInterface
     public function addConstraint(ConstraintInterface $constraint): self
     {
         $this->constraints[] = $constraint;
+        return $this;
+    }
+
+    public function setDomainReducers(array $domainReducers): self
+    {
+        $this->domainReducers = $domainReducers;
+        return $this;
+    }
+
+    public function addDomainReducer(DomainReducerInterface $domainReducer): self
+    {
+        $this->domainReducers[] = $domainReducer;
         return $this;
     }
 
@@ -82,12 +97,24 @@ final class BacktrackingPlanner implements PlannerInterface
 
     private function reject(BacktrackableAssignment $assignment): bool
     {
+        // rejectable constraints
         foreach ($this->constraints as $constraint) {
             if ($constraint instanceof RejectableConstraintInterface
              && $constraint->reject($assignment)) {
                 return true;
             }
         }
+
+        // empty domains
+        $planning = $assignment->getPlanning();
+        for($game = 0 ; $game < $planning->getGameCount() ; ++$game) {
+            foreach($planning->getTaskTypes() as $type) {
+                if (empty($assignment->getAvailablePersons($game, $type))) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -127,10 +154,11 @@ final class BacktrackingPlanner implements PlannerInterface
         }
         foreach ($this->choosePerson($ba, $game, $type) as $person) {
             $ba->setTask($game, $type, $person);
+            $ba->applyDomainReducers($this->domainReducers);
             if (!$this->reject($ba)) {
                 yield from $this->backtrack($ba);
             }
-            $ba->unsetTask($game, $type);
+            $ba->unsetLastTask();
         }
     }
 

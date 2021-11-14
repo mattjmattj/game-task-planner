@@ -11,7 +11,7 @@ use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\BacktrackableAssignment;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Backtracking\Constraint\RejectableConstraintInterface;
-use App\Backtracking\Heuristic\LesserTasksPersonChooserHeuristic;
+use App\Backtracking\DomainReducer\OneTaskPerGameDomainReducer;
 use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
 use App\Service\Planner\BacktrackingPlanner;
 use App\Service\Planner\ImpossiblePlanningException;
@@ -40,10 +40,11 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         // + no specialist
         $this->planner->addConstraint(new NoSpecialistConstraint);
         $this->planner->addConstraint(new NotTwiceTheSameTaskConstraint);
+        $this->planner->setPersonChooserHeuristic(new NoSpecialistPersonChooserHeuristic);
 
         $this->planner->setMaxBacktracking(100000);
 
-        $this->planner->setPersonChooserHeuristic(new NoSpecialistPersonChooserHeuristic);
+        $this->planner->addDomainReducer(new OneTaskPerGameDomainReducer);
     }
 
     public function getPlanner(): PlannerInterface
@@ -146,41 +147,41 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         $assignment = $this->generateTestAssignment($this->planner, $this->makePlanning(6, 7, 4));
 
         $details = [
-            'T1' => [
+            'T0' => [
+                'P0' => 0,
                 'P1' => 0,
                 'P2' => 0,
                 'P3' => 0,
                 'P4' => 0,
                 'P5' => 0,
                 'P6' => 0,
-                'P7' => 0,
+            ],
+            'T1' => [
+                'P0' => 0,
+                'P1' => 0,
+                'P2' => 0,
+                'P3' => 0,
+                'P4' => 0,
+                'P5' => 0,
+                'P6' => 0,
             ],
             'T2' => [
+                'P0' => 0,
                 'P1' => 0,
                 'P2' => 0,
                 'P3' => 0,
                 'P4' => 0,
                 'P5' => 0,
                 'P6' => 0,
-                'P7' => 0,
             ],
             'T3' => [
+                'P0' => 0,
                 'P1' => 0,
                 'P2' => 0,
                 'P3' => 0,
                 'P4' => 0,
                 'P5' => 0,
                 'P6' => 0,
-                'P7' => 0,
-            ],
-            'T4' => [
-                'P1' => 0,
-                'P2' => 0,
-                'P3' => 0,
-                'P4' => 0,
-                'P5' => 0,
-                'P6' => 0,
-                'P7' => 0,
             ],
         ];
 

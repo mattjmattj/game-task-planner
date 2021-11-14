@@ -7,6 +7,7 @@ use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Backtracking\Constraint\UnavailablePersonConstraint;
+use App\Backtracking\DomainReducer\OneTaskPerGameDomainReducer;
 use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
 use App\Entity\Planning;
 use App\Entity\UnavailablePerson;
@@ -38,6 +39,8 @@ class PlanningCrudController extends AbstractCrudController
         $this->planner->addConstraint(new NotTwiceTheSameTaskConstraint);
 
         $this->planner->setPersonChooserHeuristic(new NoSpecialistPersonChooserHeuristic);
+
+        $this->planner->addDomainReducer(new OneTaskPerGameDomainReducer);
     }
 
     public static function getEntityFqcn(): string
