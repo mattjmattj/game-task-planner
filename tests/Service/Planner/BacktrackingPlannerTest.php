@@ -11,6 +11,7 @@ use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\BacktrackableAssignment;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Backtracking\Constraint\RejectableConstraintInterface;
+use App\Backtracking\DomainReducer\NotTwiceTheSameTaskDomainReducer;
 use App\Backtracking\DomainReducer\OneTaskPerGameDomainReducer;
 use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
 use App\Service\Planner\BacktrackingPlanner;
@@ -45,6 +46,7 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
         $this->planner->setMaxBacktracking(100000);
 
         $this->planner->addDomainReducer(new OneTaskPerGameDomainReducer);
+        $this->planner->addDomainReducer(new NotTwiceTheSameTaskDomainReducer);
     }
 
     public function getPlanner(): PlannerInterface
