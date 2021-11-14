@@ -3,6 +3,7 @@
 namespace App\Tests\Service\Backtracking\Constraint;
 
 use App\Backtracking\BacktrackableAssignment;
+use App\Backtracking\DomainReducer\OneTaskPerGameDomainReducer;
 use App\Tests\Service\Planner\PlannerTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -27,7 +28,7 @@ class BacktrackableAssignmentTest extends KernelTestCase
         $this->assertTrue($ba->isTaskSlotAvailable(2, $planning->getTaskTypes()->get(1)));
         $this->assertTrue($ba->isTaskSlotAvailable(1, $planning->getTaskTypes()->get(0)));
 
-        $ba->unsetTask(1, $planning->getTaskTypes()->get(1));
+        $ba->unsetLastTask();
 
         $this->assertCount(12, $ba->getAvailableTaskSlots());
     }
@@ -72,6 +73,19 @@ class BacktrackableAssignmentTest extends KernelTestCase
 
         $availablePersons = $ba->getAvailablePersons(0, $planning->getTaskTypes()->get(3));
 
+        $this->assertEqualsCanonicalizing([
+            $planning->getPersons()->get(0),
+            $planning->getPersons()->get(1),
+            $planning->getPersons()->get(2),
+            $planning->getPersons()->get(3),
+            $planning->getPersons()->get(4),
+            $planning->getPersons()->get(5)
+        ], $availablePersons);
+
+        $ba->applyDomainReducers([new OneTaskPerGameDomainReducer]);
+
+        $availablePersons = $ba->getAvailablePersons(0, $planning->getTaskTypes()->get(3));
+        
         $this->assertEqualsCanonicalizing([
             $planning->getPersons()->get(0),
             $planning->getPersons()->get(4),
