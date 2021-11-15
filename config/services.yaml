@@ -21,12 +21,6 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
             - '../src/Backtracking/'
-
-    App\Service\Planner\BasicPlanner:
-        shared: false
-        arguments:
-            $planner: '@App\Service\Planner\BacktrackingPlanner'
-            $validator: '@validator'
     
     App\Service\Planner\BacktrackingPlanner:
         shared: false
