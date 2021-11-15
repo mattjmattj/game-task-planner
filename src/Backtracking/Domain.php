@@ -53,6 +53,11 @@ final class Domain
         return array_values($this->domain[$game][$type]);
     }
 
+    public function getDomainCount(int $game, TaskType $type): int
+    {
+        return count($this->domain[$game][$type]);
+    }
+
     public function setDomain(int $game, TaskType $type, array $people): self
     {
         $this->domain[$game][$type] = $people;

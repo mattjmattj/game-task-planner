@@ -188,6 +188,13 @@ final class BacktrackableAssignment
         return $domain->getDomain($game, $type);
     }
 
+    public function getAvailablePersonCount(int $game, TaskType $type): int
+    {
+        /** @var Domain */
+        $domain = $this->domainStack->top();
+        return $domain->getDomainCount($game, $type);
+    }
+
     public function getAvailableTaskSlots(): array
     {
         return array_values($this->availableTaskSlots);
