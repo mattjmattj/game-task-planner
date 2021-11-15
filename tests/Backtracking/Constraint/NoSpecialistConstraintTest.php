@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Backtracking\Constraint;
+namespace App\Tests\Backtracking\Constraint;
 
 use App\Backtracking\BacktrackableAssignment;
 use App\Backtracking\Constraint\NoSpecialistConstraint;

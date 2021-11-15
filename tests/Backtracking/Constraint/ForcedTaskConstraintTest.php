@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Tests\Service\Backtracking\Constraint;
+namespace App\Tests\Backtracking\Constraint;
 
 use App\Backtracking\Constraint\AssignmentValidatorConstraint;
 use App\Backtracking\Constraint\ForcedTaskConstraint;
-use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
-use App\Backtracking\Constraint\UnavailablePersonConstraint;
-use App\Entity\Planning;
 use App\Service\Planner\BacktrackingPlanner;
 use App\Tests\Service\Planner\PlannerTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
