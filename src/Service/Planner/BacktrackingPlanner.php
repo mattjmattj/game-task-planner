@@ -12,6 +12,8 @@ use App\Backtracking\Constraint\RejectableConstraintInterface;
 use App\Backtracking\DomainReducer\DomainReducerInterface;
 use App\Backtracking\Heuristic\LesserTasksPersonChooserHeuristic;
 use App\Backtracking\Heuristic\PersonChooserHeuristicInterface;
+use App\Backtracking\Heuristic\NullTaskSlotChooserHeuristic;
+use App\Backtracking\Heuristic\TaskSlotChooserHeuristicInterface;
 
 final class BacktrackingPlanner implements PlannerInterface
 {
@@ -24,11 +26,14 @@ final class BacktrackingPlanner implements PlannerInterface
 
     private PersonChooserHeuristicInterface $personChooserHeuristic;
 
+    private TaskSlotChooserHeuristicInterface $taskSlotChooserHeuristic;
+
     private array $domainReducers = [];
 
     public function __construct()
     {
         $this->personChooserHeuristic = new LesserTasksPersonChooserHeuristic;
+        $this->taskSlotChooserHeuristic = new NullTaskSlotChooserHeuristic;
     }
 
     public function setConstraints(array $constraints): self
@@ -69,6 +74,12 @@ final class BacktrackingPlanner implements PlannerInterface
     public function setPersonChooserHeuristic(PersonChooserHeuristicInterface $personChooserHeuristic): self
     {
         $this->personChooserHeuristic = $personChooserHeuristic;
+        return $this;
+    }
+
+    public function setTaskSlotChooserHeuristic(TaskSlotChooserHeuristicInterface $taskSlotChooserHeuristicInterface): self
+    {
+        $this->taskSlotChooserHeuristic = $taskSlotChooserHeuristicInterface;
         return $this;
     }
 
@@ -120,12 +131,8 @@ final class BacktrackingPlanner implements PlannerInterface
 
     private function pickTaskSlot(BacktrackableAssignment $ba): array
     {
-        // TODO we can do better
-        $availableTaskSlots = $ba->getAvailableTaskSlots();
-        if (empty($availableTaskSlots)) {
-            throw new \Exception("No slot available");
-        }
-        return array_pop($availableTaskSlots);
+        $heuristic = $this->taskSlotChooserHeuristic;
+        return $heuristic($ba);
     }
 
     private function choosePerson(BacktrackableAssignment $ba, int $game, TaskType $type): iterable
