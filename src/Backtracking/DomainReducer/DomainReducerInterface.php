@@ -5,7 +5,7 @@ namespace App\Backtracking\DomainReducer;
 use App\Backtracking\Domain;
 
 /**
- * A DomainReducer aims at computing a new, smaller, unreduceable domain 
+ * A DomainReducer aims at computing a new, smaller domain 
  */
 interface DomainReducerInterface
 {

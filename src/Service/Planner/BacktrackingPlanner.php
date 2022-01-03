@@ -129,6 +129,24 @@ final class BacktrackingPlanner implements PlannerInterface
         return false;
     }
 
+    /**
+     * @return bool - true if lookahead did not reach a rejected solution
+     */
+    private function lookahead(BacktrackableAssignment $ba): bool
+    {
+        do {
+            $reduced = false;
+            foreach ($this->domainReducers as $reducer) {
+                $reduced |= $ba->applyDomainReducer($reducer);
+                if ($this->reject($ba)) {
+                    return false;
+                }
+            }
+        } while($reduced);
+
+        return true;
+    }
+
     private function pickTaskSlot(BacktrackableAssignment $ba): array
     {
         $heuristic = $this->taskSlotChooserHeuristic;
@@ -161,8 +179,7 @@ final class BacktrackingPlanner implements PlannerInterface
         }
         foreach ($this->choosePerson($ba, $game, $type) as $person) {
             $ba->setTask($game, $type, $person);
-            $ba->applyDomainReducers($this->domainReducers);
-            if (!$this->reject($ba)) {
+            if ($this->lookahead($ba)) {
                 yield from $this->backtrack($ba);
             }
             $ba->unsetLastTask();

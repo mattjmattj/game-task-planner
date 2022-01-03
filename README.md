@@ -9,8 +9,10 @@ the amount of work for each person involved.
 ## Big warning
 
 This application is mainly an excuse for teaching TDD, so don't expect me to provide
-any kind of support whatsoever :) : there is no roadmap, no backlog, no nothing. I'm
+any kind of support whatsoever. There is no roadmap, no backlog, no nothing. I'm
 not even sure that it will work at some point.
+
+
 
 ## TDD
 

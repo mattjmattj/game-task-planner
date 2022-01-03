@@ -4,6 +4,7 @@ namespace App\Backtracking;
 
 use App\Assignment\Assignment;
 use App\Assignment\Task;
+use App\Backtracking\DomainReducer\DomainReducerInterface;
 use App\Entity\Person;
 use App\Entity\Planning;
 use App\Entity\TaskType;
@@ -153,6 +154,12 @@ final class BacktrackableAssignment
                 $changed |= $reducer($domain);
             }
         } while ($changed);
+    }
+
+    public function applyDomainReducer(DomainReducerInterface $reducer): bool
+    {
+        $domain = $this->domainStack->top();
+        return $reducer($domain);
     }
 
     public function unsetLastTask(): self

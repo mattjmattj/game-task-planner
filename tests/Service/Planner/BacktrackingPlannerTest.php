@@ -48,8 +48,8 @@ class BacktrackingPlannerTest extends AbstractPlannerTest
 
         $this->planner->setMaxBacktracking(100000);
 
-        $this->planner->addDomainReducer(new OneTaskPerGameDomainReducer);
         $this->planner->addDomainReducer(new NotTwiceTheSameTaskDomainReducer);
+        $this->planner->addDomainReducer(new OneTaskPerGameDomainReducer);
     }
 
     public function getPlanner(): PlannerInterface
