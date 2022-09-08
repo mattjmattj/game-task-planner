@@ -13,7 +13,7 @@ class Assignment extends Constraint
 
     public string $message = 'The assignment is not valid';
 
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }
