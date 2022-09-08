@@ -14,6 +14,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.10",
         "easycorp/easyadmin-bundle": "^4.3",
+        "league/csv": "^9.8",
         "phpdocumentor/reflection-docblock": "^5.3",
         "sensio/framework-extra-bundle": "^6.1",
         "symfony/asset": "6.1.*",
