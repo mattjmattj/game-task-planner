@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Backtracking\Constraint\AssignmentValidatorConstraint;
+use App\Backtracking\Constraint\ForcedTaskConstraint;
 use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
@@ -11,8 +12,10 @@ use App\Backtracking\DomainReducer\NotTwiceTheSameTaskDomainReducer;
 use App\Backtracking\DomainReducer\OneTaskPerGameDomainReducer;
 use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
 use App\Backtracking\Heuristic\SmallestDomainTaskSlotChooserHeuristic;
+use App\Entity\ForcedTask;
 use App\Entity\Planning;
 use App\Entity\UnavailablePerson;
+use App\Form\ForcedTaskType;
 use App\Form\UnavailablePersonType;
 use App\Service\Planner\BacktrackingPlanner;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -75,6 +78,16 @@ class PlanningCrudController extends AbstractCrudController
                 ])
                 ->onlyOnForms()
                 ->onlyWhenUpdating(),
+            CollectionField::new('forcedTasks', 'Forced tasks')
+                ->setEntryIsComplex(true)
+                ->setEntryType(ForcedTaskType::class)
+                ->setFormTypeOptions([
+                    'entry_options' => [
+                        'planning' => $planning,
+                    ],
+                ])
+                ->onlyOnForms()
+                ->onlyWhenUpdating(),
         ];
     }
     
@@ -107,6 +120,18 @@ class PlanningCrudController extends AbstractCrudController
                 new UnavailablePersonConstraint(
                     $unavailablePerson->getPerson(),
                     $unavailablePerson->getGame()
+                )
+            );
+        }
+
+        foreach ($planning->getForcedTasks() as $forcedTask) {
+            /** @var ForcedTask $forcedTask */
+            
+            $this->planner->addConstraint(
+                new ForcedTaskConstraint(
+                    $forcedTask->getGame(),
+                    $forcedTask->getTaskType(),
+                    $forcedTask->getPerson()
                 )
             );
         }
