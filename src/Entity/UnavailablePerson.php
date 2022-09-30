@@ -5,33 +5,23 @@ namespace App\Entity;
 use App\Repository\UnavailablePersonRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=UnavailablePersonRepository::class)
- */
+#[ORM\Entity(repositoryClass: UnavailablePersonRepository::class)]
 class UnavailablePerson
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Planning::class, inversedBy="unavailablePeople", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Planning::class, inversedBy: 'unavailablePeople', cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: false)]
     private $planning;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Person::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Person::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $person;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $game;
 
     public function getId(): ?int

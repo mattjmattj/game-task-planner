@@ -7,41 +7,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PlanningRepository::class)
- */
+#[ORM\Entity(repositoryClass: PlanningRepository::class)]
 class Planning
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private string $title;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Person::class, inversedBy="plannings")
-     */
+    #[ORM\ManyToMany(targetEntity: Person::class, inversedBy: 'plannings')]
     private $persons;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=TaskType::class)
-     */
+    #[ORM\ManyToMany(targetEntity: TaskType::class)]
     private $taskTypes;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $gameCount;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UnavailablePerson::class, mappedBy="planning", orphanRemoval=true, cascade={"persist"})
-     */
+    #[ORM\OneToMany(targetEntity: UnavailablePerson::class, mappedBy: 'planning', orphanRemoval: true, cascade: ['persist'])]
     private $unavailablePeople;
 
     public function __construct()
