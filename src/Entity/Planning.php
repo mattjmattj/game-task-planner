@@ -30,12 +30,16 @@ class Planning
     #[ORM\OneToMany(targetEntity: UnavailablePerson::class, mappedBy: 'planning', orphanRemoval: true, cascade: ['persist'])]
     private $unavailablePeople;
 
+    #[ORM\OneToMany(targetEntity: ForcedTask::class, mappedBy: 'planning', orphanRemoval: true, cascade: ['persist'])]
+    private Collection $forcedTasks;
+
     public function __construct()
     {
         $this->taskTypes = new ArrayCollection();
         $this->persons = new ArrayCollection();
         $this->assignments = new ArrayCollection();
         $this->unavailablePeople = new ArrayCollection();
+        $this->forcedTasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,6 +149,36 @@ class Planning
             // set the owning side to null (unless already changed)
             if ($unavailablePerson->getPlanning() === $this) {
                 $unavailablePerson->setPlanning(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ForcedTask>
+     */
+    public function getForcedTasks(): Collection
+    {
+        return $this->forcedTasks;
+    }
+
+    public function addForcedTask(ForcedTask $forcedTask): self
+    {
+        if (!$this->forcedTasks->contains($forcedTask)) {
+            $this->forcedTasks->add($forcedTask);
+            $forcedTask->setPlanning($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForcedTask(ForcedTask $forcedTask): self
+    {
+        if ($this->forcedTasks->removeElement($forcedTask)) {
+            // set the owning side to null (unless already changed)
+            if ($forcedTask->getPlanning() === $this) {
+                $forcedTask->setPlanning(null);
             }
         }
 
