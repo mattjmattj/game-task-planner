@@ -43,6 +43,15 @@ final class Domain
                 $this->setDomain($game, $type, $this->planning->getPersons()->toArray());
             }
         }
+
+        // we take forced task directly into account at init time
+        foreach ($this->planning->getForcedTasks() as $forcedTask) {            
+            $this->setDomain(
+                $forcedTask->getGame(),
+                $forcedTask->getTaskType(),
+                [$forcedTask->getPerson()]
+            );
+        }
     }
 
     /**

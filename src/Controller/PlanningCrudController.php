@@ -48,7 +48,6 @@ class PlanningCrudController extends AbstractCrudController
 
         $this->planner->setTaskSlotChooserHeuristic(new SmallestDomainTaskSlotChooserHeuristic);
 
-        $this->planner->addDomainReducer(new ForcedTaskDomainReducer);
         $this->planner->addDomainReducer(new OneTaskPerGameDomainReducer);
         $this->planner->addDomainReducer(new NotTwiceTheSameTaskDomainReducer);
     }
