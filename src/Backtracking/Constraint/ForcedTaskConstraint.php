@@ -9,7 +9,7 @@ use App\Entity\TaskType;
 /**
  * Constraint forcing a given assignment of a task
  */
-final class ForcedTaskConstraint implements ConstraintInterface
+final class ForcedTaskConstraint implements RejectableConstraintInterface
 {
     public function __construct(
         private int $game,

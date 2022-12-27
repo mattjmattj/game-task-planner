@@ -8,6 +8,7 @@ use App\Backtracking\Constraint\NoSpecialistConstraint;
 use App\Backtracking\Constraint\NotTooManyTasksConstraint;
 use App\Backtracking\Constraint\NotTwiceTheSameTaskConstraint;
 use App\Backtracking\Constraint\UnavailablePersonConstraint;
+use App\Backtracking\DomainReducer\ForcedTaskDomainReducer;
 use App\Backtracking\DomainReducer\NotTwiceTheSameTaskDomainReducer;
 use App\Backtracking\DomainReducer\OneTaskPerGameDomainReducer;
 use App\Backtracking\Heuristic\NoSpecialistPersonChooserHeuristic;
@@ -47,6 +48,7 @@ class PlanningCrudController extends AbstractCrudController
 
         $this->planner->setTaskSlotChooserHeuristic(new SmallestDomainTaskSlotChooserHeuristic);
 
+        $this->planner->addDomainReducer(new ForcedTaskDomainReducer);
         $this->planner->addDomainReducer(new OneTaskPerGameDomainReducer);
         $this->planner->addDomainReducer(new NotTwiceTheSameTaskDomainReducer);
     }
